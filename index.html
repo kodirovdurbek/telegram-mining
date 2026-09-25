@@ -1,161 +1,54 @@
-<!DOCTYPE html>
-<html lang="uz">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Crypto Mining Simulator</title>
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <style>
-        :root {
-            --bg: #0a0e17;
-            --panel: #131b2a;
-            --accent: #00d2ff;
-            --gold: #f59e0b;
-            --green: #10b981;
-            --text: #f8fafc;
-            --text-dim: #94a3b8;
+const express = require('express');
+const path = require('path');
+const axios = require('axios');
+
+const app = express();
+const PORT = process.env.PORT || 3000;
+
+// Siz taqdim etgan Telegram bot tokeni to'liq joylashtirildi:
+const BOT_TOKEN = '8730914356:AAHqtDKAORwFUIg86jFKEAvOfKqsZRneasY';
+
+app.use(express.json());
+app.use(express.static(path.join(__dirname)));
+
+// Telegram Stars orqali to'lov havolasi (Invoice) yaratish
+app.post('/api/create-stars-invoice', async (req, res) => {
+    try {
+        const { title, description, starsPrice, payload } = req.body;
+
+        const response = await axios.post(`https://api.telegram.org/bot${BOT_TOKEN}/createInvoiceLink`, {
+            title: title,
+            description: description,
+            payload: payload,
+            currency: 'XTR', // Telegram Stars valyutasi
+            prices: [{ label: title, amount: starsPrice }]
+        });
+
+        if (response.data.ok) {
+            res.json({ success: true, invoiceLink: response.data.result });
+        } else {
+            res.status(400).json({ success: false, error: response.data.description });
         }
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; user-select: none; }
-        body { background: var(--bg); color: var(--text); padding: 15px; display: flex; flex-direction: column; align-items: center; }
-        .header-box {
-            width: 100%; max-width: 400px; background: var(--panel); border: 1px solid #1f293d;
-            border-radius: 16px; padding: 15px; display: flex; justify-content: space-between; margin-bottom: 15px;
-        }
-        .stat-label { font-size: 11px; color: var(--text-dim); text-transform: uppercase; }
-        .stat-num { font-size: 16px; font-weight: bold; color: var(--green); }
-        .balance-card { text-align: center; margin-bottom: 20px; }
-        .balance-card h2 { font-size: 32px; color: var(--gold); text-shadow: 0 0 15px rgba(245,158,11,0.3); }
-        .rig-display {
-            width: 100%; max-width: 400px; background: #0f1724; border: 2px dashed #1e293b;
-            border-radius: 16px; padding: 20px; text-align: center; margin-bottom: 20px;
-        }
-        .rig-icon { font-size: 60px; margin-bottom: 10px; }
-        .shop-title { width: 100%; max-width: 400px; font-size: 14px; color: var(--text-dim); margin-bottom: 10px; }
-        .device-card {
-            width: 100%; max-width: 400px; background: var(--panel); border-radius: 14px;
-            padding: 12px 15px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center;
-            border: 1px solid #1f293d;
-        }
-        .dev-info h4 { font-size: 14px; margin-bottom: 4px; }
-        .dev-info p { font-size: 12px; color: var(--text-dim); }
-        .btn-buy {
-            background: linear-gradient(135deg, #f59e0b, #d97706); color: #000;
-            border: none; padding: 8px 12px; border-radius: 8px; font-weight: bold; cursor: pointer;
-        }
-        .withdraw-box {
-            width: 100%; max-width: 400px; margin-top: 15px; background: #111827;
-            padding: 15px; border-radius: 14px; border: 1px solid #374151; text-align: center;
-        }
-        .btn-withdraw {
-            width: 100%; background: var(--green); color: white; border: none;
-            padding: 10px; border-radius: 8px; font-size: 14px; font-weight: bold; margin-top: 8px; cursor: pointer;
-        }
-    </style>
-</head>
-<body>
-    <div class="header-box">
-        <div>
-            <div class="stat-label">Rig Quvvati</div>
-            <div class="stat-num"><span id="hashrate">0</span> MH/s</div>
-        </div>
-        <div style="text-align: right;">
-            <div class="stat-label">Tezlik</div>
-            <div class="stat-num">+<span id="speed">0.00</span> ⭐/min</div>
-        </div>
-    </div>
-    <div class="balance-card">
-        <div class="stat-label">Yig‘ilgan Telegram Stars</div>
-        <h2>⭐ <span id="stars-balance">0.0000</span></h2>
-    </div>
-    <div class="rig-display">
-        <div class="rig-icon">⚡️🖥️⚡️</div>
-        <div style="font-size: 13px; color: var(--text-dim);">Mining Apparatlar: <b id="rig-count" style="color:#fff;">0</b> ta</div>
-    </div>
-    <div class="shop-title">🛠 Apparatlar Dokoni (Stars orqali)</div>
-    <div class="device-card">
-        <div class="dev-info">
-            <h4>RTX 4090 Mining Rig</h4>
-            <p>+120 MH/s | +0.05 ⭐/min</p>
-        </div>
-        <button class="btn-buy" onclick="buyDevice('RTX 4090 Rig', 50, 120, 0.05)">50 ⭐</button>
-    </div>
-    <div class="device-card">
-        <div class="dev-info">
-            <h4>Antminer S19 Pro</h4>
-            <p>+300 MH/s | +0.20 ⭐/min</p>
-        </div>
-        <button class="btn-buy" onclick="buyDevice('Antminer S19 Pro', 150, 300, 0.20)">150 ⭐</button>
-    </div>
-    <div class="device-card">
-        <div class="dev-info">
-            <h4>Kripto Konteyner (Mega Rig)</h4>
-            <p>+1000 MH/s | +1.00 ⭐/min</p>
-        </div>
-        <button class="btn-buy" onclick="buyDevice('Mega Konteyner', 500, 1000, 1.00)">500 ⭐</button>
-    </div>
-    <div class="withdraw-box">
-        <div class="stat-label">Stars Balansini Yechib Olish</div>
-        <div style="font-size: 11px; color: var(--text-dim); margin-top: 3px;">Minimal yechish: <b>100 ⭐</b></div>
-        <button class="btn-withdraw" onclick="withdrawStars()">Hisobga o'tkazish (Withdraw)</button>
-    </div>
-    <script>
-        const tg = window.Telegram?.WebApp;
-        if (tg) { tg.ready(); tg.expand(); }
-        let balance = parseFloat(localStorage.getItem('stars_bal')) || 0;
-        let hashrate = parseInt(localStorage.getItem('user_hashrate')) || 0;
-        let speed = parseFloat(localStorage.getItem('user_speed')) || 0;
-        let rigCount = parseInt(localStorage.getItem('rig_count')) || 0;
-        function updateUI() {
-            document.getElementById('stars-balance').innerText = balance.toFixed(4);
-            document.getElementById('hashrate').innerText = hashrate;
-            document.getElementById('speed').innerText = speed.toFixed(2);
-            document.getElementById('rig-count').innerText = rigCount;
-            localStorage.setItem('stars_bal', balance);
-            localStorage.setItem('user_hashrate', hashrate);
-            localStorage.setItem('user_speed', speed);
-            localStorage.setItem('rig_count', rigCount);
-        }
-        setInterval(() => {
-            if (speed > 0) { balance += (speed / 60); updateUI(); }
-        }, 1000);
-        async function buyDevice(name, starsCost, addedHash, addedSpeed) {
-            try {
-                const res = await fetch('/api/create-stars-invoice', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        title: name,
-                        description: `${addedHash} MH/s quvvat beruvchi apparat`,
-                        starsPrice: starsCost,
-                        payload: `buy_${name.replace(/\\s+/g, '_')}`
-                    })
-                });
-                const data = await res.json();
-                if (data.success && data.invoiceLink) {
-                    tg.openInvoice(data.invoiceLink, (status) => {
-                        if (status === 'paid') {
-                            hashrate += addedHash; speed += addedSpeed; rigCount += 1;
-                            updateUI();
-                            alert(`${name} xarid qilindi! Mining tezligi oshdi.`);
-                        }
-                    });
-                } else {
-                    alert("Xato: " + (data.error || "Invoice ochilmadi"));
-                }
-            } catch (e) { alert("Xatolik: " + e.message); }
-        }
-        async function withdrawStars() {
-            if (balance < 100) { alert("Minimal yechib olish: 100 ⭐"); return; }
-            const user = tg.initDataUnsafe?.user || {};
-            const res = await fetch('/api/withdraw', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ userId: user.id || 0, username: user.username || '', amount: Math.floor(balance) })
-            });
-            const data = await res.json();
-            if (data.success) { balance = 0; updateUI(); alert(data.message); }
-        }
-        updateUI();
-    </script>
-</body>
-</html>
+    } catch (err) {
+        res.status(500).json({ success: false, error: err.message });
+    }
+});
+
+// Yechib olish (Withdraw) so'rovi
+app.post('/api/withdraw', async (req, res) => {
+    try {
+        const { userId, username, amount } = req.body;
+        console.log(`Chiqarish so'rovi: @${username} (ID: ${userId}) -> ${amount} Stars`);
+        res.json({ success: true, message: "Yechib olish so'rovingiz qabul qilindi!" });
+    } catch (err) {
+        res.status(500).json({ success: false, error: err.message });
+    }
+});
+
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, 'index.html'));
+});
+
+app.listen(PORT, () => {
+    console.log(`Server ishlamoqda: ${PORT}`);
+});
