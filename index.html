@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mining Bot</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #18191a;
+      color: #ffffff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .balance-card {
+      background: #242526;
+      padding: 30px;
+      border-radius: 16px;
+      text-align: center;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+    }
+    .title {
+      font-size: 18px;
+      color: #b0b3b8;
+    }
+    .balance {
+      font-size: 40px;
+      font-weight: bold;
+      color: #2ecc71;
+      margin: 15px 0;
+    }
+    .status {
+      font-size: 14px;
+      color: #3ea6ff;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="balance-card">
+    <div class="title">Joriy Balans</div>
+    <div class="balance" id="balance">0.0000</div>
+    <div class="status">⚡ Qazib olinmoqda...</div>
+  </div>
+
+  <script>
+    const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+    const socket = new WebSocket(`${protocol}//${window.location.host}`);
+
+    socket.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+      if (data.balance !== undefined) {
+        document.getElementById('balance').innerText = data.balance;
+      }
+    };
+
+    socket.onclose = () => {
+      document.querySelector('.status').innerText = '❌ Aloqa uzildi';
+      document.querySelector('.status').style.color = '#e74c3c';
+    };
+  </script>
+</body>
+</html>
