@@ -1,40 +1,52 @@
 const express = require('express');
-const http = require('http');
-const WebSocket = require('ws');
 const path = require('path');
+const axios = require('axios');
 
 const app = express();
-
-// HTML va static fayllarni ochib berish
-app.use(express.static(__dirname));
-
-const server = http.createServer(app);
-const wss = new WebSocket.Server({ server });
-
-// Bosh sahifa
-app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'index.html'));
-});
-
-// WebSocket orqali real vaqtda balansni uzatish
-wss.on('connection', (ws) => {
-  console.log('Foydalanuvchi ulandi');
-
-  let balance = 0;
-  const miningRatePerSecond = 0.001; // Har soniyada qazib olinadigan miqdor
-
-  const interval = setInterval(() => {
-    balance += miningRatePerSecond;
-    ws.send(JSON.stringify({ balance: balance.toFixed(4) }));
-  }, 1000);
-
-  ws.on('close', () => {
-    clearInterval(interval);
-    console.log('Foydalanuvchi uzildi');
-  });
-});
-
 const PORT = process.env.PORT || 3000;
-server.listen(PORT, () => {
-  console.log(`Server ${PORT}-portda ishlamoqda`);
+
+// BotFather bergan bot tokeningizni kiriting
+const BOT_TOKEN = process.env.BOT_TOKEN || 'BOT_TOKENINGIZNI_SHU_YERGA_YOZING';
+
+app.use(express.json());
+app.use(express.static(path.join(__dirname)));
+
+// Telegram Stars to'lov havolasi yaratish
+app.post('/api/create-stars-invoice', async (req, res) => {
+    try {
+        const { title, description, starsPrice, payload } = req.body;
+        const response = await axios.post(`https://api.telegram.org/bot${BOT_TOKEN}/createInvoiceLink`, {
+            title: title,
+            description: description,
+            payload: payload,
+            currency: 'XTR',
+            prices: [{ label: title, amount: starsPrice }]
+        });
+        if (response.data.ok) {
+            res.json({ success: true, invoiceLink: response.data.result });
+        } else {
+            res.status(400).json({ success: false, error: response.data.description });
+        }
+    } catch (err) {
+        res.status(500).json({ success: false, error: err.message });
+    }
+});
+
+// Yechib olish so'rovi
+app.post('/api/withdraw', async (req, res) => {
+    try {
+        const { userId, username, amount } = req.body;
+        console.log(`Chiqarish so'rovi: @${username} (ID: ${userId}) -> ${amount} Stars`);
+        res.json({ success: true, message: "Yechib olish so'rovingiz qabul qilindi!" });
+    } catch (err) {
+        res.status(500).json({ success: false, error: err.message });
+    }
+});
+
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, 'index.html'));
+});
+
+app.listen(PORT, () => {
+    console.log(`Server ishlamoqda: ${PORT}`);
 });
