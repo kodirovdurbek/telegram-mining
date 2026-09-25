@@ -1,68 +1,424 @@
 <!DOCTYPE html>
 <html lang="uz">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Mining Bot</title>
-  <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #18191a;
-      color: #ffffff;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-      margin: 0;
-    }
-    .balance-card {
-      background: #242526;
-      padding: 30px;
-      border-radius: 16px;
-      text-align: center;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.5);
-    }
-    .title {
-      font-size: 18px;
-      color: #b0b3b8;
-    }
-    .balance {
-      font-size: 40px;
-      font-weight: bold;
-      color: #2ecc71;
-      margin: 15px 0;
-    }
-    .status {
-      font-size: 14px;
-      color: #3ea6ff;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Crypto Mining Simulator</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        :root {
+            --bg-color: #0d0f17;
+            --card-bg: #161b26;
+            --accent: #f59e0b;
+            --accent-glow: rgba(245, 158, 11, 0.4);
+            --text-main: #f8fafc;
+            --text-sub: #94a3b8;
+            --green: #10b981;
+        }
+        * {
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-user-select: none;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            padding: 16px;
+            overflow-x: hidden;
+        }
+        .header {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--card-bg);
+            padding: 12px 18px;
+            border-radius: 16px;
+            border: 1px solid #1e293b;
+            margin-bottom: 20px;
+        }
+        .stat-item {
+            display: flex;
+            flex-direction: column;
+        }
+        .stat-title {
+            font-size: 11px;
+            color: var(--text-sub);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .stat-value {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--green);
+        }
+        .balance-container {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+        .balance-title {
+            font-size: 13px;
+            color: var(--text-sub);
+            margin-bottom: 4px;
+        }
+        .balance-value {
+            font-size: 38px;
+            font-weight: 800;
+            color: #fbbf24;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            text-shadow: 0 0 20px var(--accent-glow);
+        }
+        /* Mining Coin */
+        .miner-container {
+            position: relative;
+            margin: 10px 0 25px 0;
+        }
+        .coin-btn {
+            width: 190px;
+            height: 190px;
+            border-radius: 50%;
+            background: radial-gradient(circle, #f59e0b 0%, #b45309 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 35px var(--accent-glow), inset 0 0 15px rgba(255,255,255,0.4);
+            border: 5px solid #fbbf24;
+            cursor: pointer;
+            transition: transform 0.08s ease;
+            position: relative;
+        }
+        .coin-btn:active {
+            transform: scale(0.94);
+        }
+        .coin-icon {
+            font-size: 75px;
+        }
+        /* Tap floating text */
+        .tap-effect {
+            position: absolute;
+            color: #fbbf24;
+            font-size: 24px;
+            font-weight: bold;
+            pointer-events: none;
+            animation: floatUp 0.8s ease-out forwards;
+        }
+        @keyframes floatUp {
+            0% { opacity: 1; transform: translateY(0); }
+            100% { opacity: 0; transform: translateY(-70px); }
+        }
+        /* Energy bar */
+        .energy-wrapper {
+            width: 100%;
+            max-width: 320px;
+            margin-bottom: 25px;
+        }
+        .energy-info {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: var(--text-sub);
+            margin-bottom: 6px;
+        }
+        .progress-bar-bg {
+            width: 100%;
+            height: 10px;
+            background: #1e293b;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .progress-bar-fill {
+            height: 100%;
+            width: 100%;
+            background: linear-gradient(90deg, #f59e0b, #10b981);
+            transition: width 0.2s ease;
+        }
+        /* Upgrades section */
+        .upgrades-section {
+            width: 100%;
+            max-width: 340px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .section-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-sub);
+            margin-bottom: 4px;
+        }
+        .upgrade-card {
+            background: var(--card-bg);
+            border: 1px solid #1e293b;
+            border-radius: 14px;
+            padding: 12px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .upgrade-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .upgrade-icon {
+            font-size: 26px;
+            background: #0f172a;
+            padding: 8px;
+            border-radius: 12px;
+        }
+        .upgrade-title {
+            font-size: 14px;
+            font-weight: 600;
+        }
+        .upgrade-desc {
+            font-size: 11px;
+            color: var(--text-sub);
+        }
+        .upgrade-btn {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: #000;
+            font-weight: 700;
+            border: none;
+            padding: 8px 14px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: opacity 0.2s;
+        }
+        .upgrade-btn:disabled {
+            background: #334155;
+            color: #64748b;
+            cursor: not-allowed;
+        }
+    </style>
 </head>
 <body>
 
-  <div class="balance-card">
-    <div class="title">Joriy Balans</div>
-    <div class="balance" id="balance">0.0000</div>
-    <div class="status">⚡ Qazib olinmoqda...</div>
-  </div>
+    <div class="header">
+        <div class="stat-item">
+            <span class="stat-title">Passiv daromad</span>
+            <span class="stat-value">+<span id="passive-rate">0</span> BTC/s</span>
+        </div>
+        <div class="stat-item" style="text-align: right;">
+            <span class="stat-title">Tap kuchi</span>
+            <span class="stat-value">+<span id="click-power">1</span></span>
+        </div>
+    </div>
 
-  <script>
-    const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-    const socket = new WebSocket(`${protocol}//${window.location.host}`);
+    <div class="balance-container">
+        <div class="balance-title">Jami Balans</div>
+        <div class="balance-value">⚡️ <span id="balance">0.0000</span></div>
+    </div>
 
-    socket.onmessage = (event) => {
-      const data = JSON.parse(event.data);
-      if (data.balance !== undefined) {
-        document.getElementById('balance').innerText = data.balance;
-      }
-    };
+    <div class="miner-container">
+        <div class="coin-btn" id="tap-coin">
+            <div class="coin-icon">⛏️</div>
+        </div>
+    </div>
 
-    socket.onclose = () => {
-      document.querySelector('.status').innerText = '❌ Aloqa uzildi';
-      document.querySelector('.status').style.color = '#e74c3c';
-    };
-  </script>
+    <div class="energy-wrapper">
+        <div class="energy-info">
+            <span>⚡️ Energiya:</span>
+            <span><span id="energy-val">500</span> / <span id="max-energy">500</span></span>
+        </div>
+        <div class="progress-bar-bg">
+            <div class="progress-bar-fill" id="energy-fill"></div>
+        </div>
+    </div>
+
+    <div class="upgrades-section">
+        <div class="section-title">Uskunalarni Yangilash (Upgrades)</div>
+
+        <!-- Upgrade 1: Click Power -->
+        <div class="upgrade-card">
+            <div class="upgrade-left">
+                <div class="upgrade-icon">🔨</div>
+                <div>
+                    <div class="upgrade-title">Kuchliroq Kirka</div>
+                    <div class="upgrade-desc">Tap: +1 tanga | Daraja: <span id="lvl-click">1</span></div>
+                </div>
+            </div>
+            <button class="upgrade-btn" id="btn-up-click" onclick="buyClickUpgrade()">50 BTC</button>
+        </div>
+
+        <!-- Upgrade 2: GPU Rig -->
+        <div class="upgrade-card">
+            <div class="upgrade-left">
+                <div class="upgrade-icon">📟</div>
+                <div>
+                    <div class="upgrade-title">GPU Ferma (RTX 4090)</div>
+                    <div class="upgrade-desc">+2 tanga/sekund | Soni: <span id="count-gpu">0</span></div>
+                </div>
+            </div>
+            <button class="upgrade-btn" id="btn-up-gpu" onclick="buyGPU()">150 BTC</button>
+        </div>
+
+        <!-- Upgrade 3: ASIC Miner -->
+        <div class="upgrade-card">
+            <div class="upgrade-left">
+                <div class="upgrade-icon">🚀</div>
+                <div>
+                    <div class="upgrade-title">ASIC Miner S19 Pro</div>
+                    <div class="upgrade-desc">+10 tanga/sekund | Soni: <span id="count-asic">0</span></div>
+                </div>
+            </div>
+            <button class="upgrade-btn" id="btn-up-asic" onclick="buyASIC()">500 BTC</button>
+        </div>
+    </div>
+
+    <script>
+        const tg = window.Telegram?.WebApp;
+        if (tg) {
+            tg.ready();
+            tg.expand();
+        }
+
+        // State & LocalStorage
+        let balance = parseFloat(localStorage.getItem('min_balance')) || 0;
+        let clickPower = parseInt(localStorage.getItem('min_clickPower')) || 1;
+        let passiveRate = parseInt(localStorage.getItem('min_passiveRate')) || 0;
+        
+        let energy = parseInt(localStorage.getItem('min_energy')) || 500;
+        const maxEnergy = 500;
+
+        let costClick = parseInt(localStorage.getItem('min_costClick')) || 50;
+        let costGPU = parseInt(localStorage.getItem('min_costGPU')) || 150;
+        let costASIC = parseInt(localStorage.getItem('min_costASIC')) || 500;
+
+        let lvlClick = parseInt(localStorage.getItem('min_lvlClick')) || 1;
+        let countGPU = parseInt(localStorage.getItem('min_countGPU')) || 0;
+        let countASIC = parseInt(localStorage.getItem('min_countASIC')) || 0;
+
+        // Elements
+        const balanceEl = document.getElementById('balance');
+        const clickPowerEl = document.getElementById('click-power');
+        const passiveRateEl = document.getElementById('passive-rate');
+        const energyValEl = document.getElementById('energy-val');
+        const energyFillEl = document.getElementById('energy-fill');
+        const coinBtn = document.getElementById('tap-coin');
+
+        const btnUpClick = document.getElementById('btn-up-click');
+        const btnUpGpu = document.getElementById('btn-up-gpu');
+        const btnUpAsic = document.getElementById('btn-up-asic');
+
+        function updateUI() {
+            balanceEl.innerText = balance.toLocaleString();
+            clickPowerEl.innerText = clickPower;
+            passiveRateEl.innerText = passiveRate;
+
+            energyValEl.innerText = energy;
+            energyFillEl.style.width = (energy / maxEnergy * 100) + '%';
+
+            btnUpClick.innerText = costClick + ' BTC';
+            btnUpClick.disabled = balance < costClick;
+
+            btnUpGpu.innerText = costGPU + ' BTC';
+            btnUpGpu.disabled = balance < costGPU;
+
+            btnUpAsic.innerText = costASIC + ' BTC';
+            btnUpAsic.disabled = balance < costASIC;
+
+            document.getElementById('lvl-click').innerText = lvlClick;
+            document.getElementById('count-gpu').innerText = countGPU;
+            document.getElementById('count-asic').innerText = countASIC;
+
+            // Save
+            localStorage.setItem('min_balance', balance);
+            localStorage.setItem('min_clickPower', clickPower);
+            localStorage.setItem('min_passiveRate', passiveRate);
+            localStorage.setItem('min_energy', energy);
+            localStorage.setItem('min_costClick', costClick);
+            localStorage.setItem('min_costGPU', costGPU);
+            localStorage.setItem('min_costASIC', costASIC);
+            localStorage.setItem('min_lvlClick', lvlClick);
+            localStorage.setItem('min_countGPU', countGPU);
+            localStorage.setItem('min_countASIC', countASIC);
+        }
+
+        // Tap handling
+        coinBtn.addEventListener('click', (e) => {
+            if (energy < clickPower) return;
+
+            balance += clickPower;
+            energy -= clickPower;
+
+            if (tg && tg.HapticFeedback) {
+                tg.HapticFeedback.impactOccurred('medium');
+            }
+
+            // Floating text effect
+            showTapEffect(e.pageX, e.pageY, `+${clickPower}`);
+            updateUI();
+        });
+
+        function showTapEffect(x, y, text) {
+            const effect = document.createElement('div');
+            effect.className = 'tap-effect';
+            effect.innerText = text;
+            effect.style.left = `${x - 15}px`;
+            effect.style.top = `${y - 30}px`;
+            document.body.appendChild(effect);
+            setTimeout(() => effect.remove(), 800);
+        }
+
+        // Upgrade functions
+        window.buyClickUpgrade = function() {
+            if (balance >= costClick) {
+                balance -= costClick;
+                clickPower += 1;
+                lvlClick += 1;
+                costClick = Math.floor(costClick * 1.6);
+                updateUI();
+            }
+        };
+
+        window.buyGPU = function() {
+            if (balance >= costGPU) {
+                balance -= costGPU;
+                passiveRate += 2;
+                countGPU += 1;
+                costGPU = Math.floor(costGPU * 1.5);
+                updateUI();
+            }
+        };
+
+        window.buyASIC = function() {
+            if (balance >= costASIC) {
+                balance -= costASIC;
+                passiveRate += 10;
+                countASIC += 1;
+                costASIC = Math.floor(costASIC * 1.5);
+                updateUI();
+            }
+        };
+
+        // Passive income timer (every 1 second)
+        setInterval(() => {
+            if (passiveRate > 0) {
+                balance += passiveRate;
+                updateUI();
+            }
+        }, 1000);
+
+        // Energy regen timer (every 1 second +3 energy)
+        setInterval(() => {
+            if (energy < maxEnergy) {
+                energy = Math.min(maxEnergy, energy + 3);
+                updateUI();
+            }
+        }, 1000);
+
+        updateUI();
+    </script>
 </body>
 </html>
