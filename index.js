@@ -1,21 +1,27 @@
 const express = require('express');
 const http = require('http');
-const WebSocket = require('ws'); 
+const WebSocket = require('ws');
+const path = require('path');
 
 const app = express();
+
+// HTML va static fayllarni ochib berish
+app.use(express.static(__dirname));
+
 const server = http.createServer(app);
 const wss = new WebSocket.Server({ server });
 
+// Bosh sahifa
 app.get('/', (req, res) => {
-  res.send('Mining server ishlayapti');
+  res.sendFile(path.join(__dirname, 'index.html'));
 });
 
 // WebSocket orqali real vaqtda balansni uzatish
 wss.on('connection', (ws) => {
-  console.log('Mijoz ulandi');
+  console.log('Foydalanuvchi ulandi');
 
   let balance = 0;
-  const miningRatePerSecond = 0.001; // Har soniyada qo'shiladigan miqdor
+  const miningRatePerSecond = 0.001; // Har soniyada qazib olinadigan miqdor
 
   const interval = setInterval(() => {
     balance += miningRatePerSecond;
@@ -24,7 +30,7 @@ wss.on('connection', (ws) => {
 
   ws.on('close', () => {
     clearInterval(interval);
-    console.log('Mijoz uzildi');
+    console.log('Foydalanuvchi uzildi');
   });
 });
 
