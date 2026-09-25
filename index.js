@@ -5,8 +5,8 @@ const axios = require('axios');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// BotFather bergan bot tokeningizni kiriting
-const BOT_TOKEN = process.env.BOT_TOKEN || 'BOT_TOKENINGIZNI_SHU_YERGA_YOZING';
+// BotFather tokeningiz to'liq joylashtirildi:
+const BOT_TOKEN = '8730914356:AAHqtDKAORwFUIg86jFKEAvOfKqsZRneasY';
 
 app.use(express.json());
 app.use(express.static(path.join(__dirname)));
@@ -15,6 +15,7 @@ app.use(express.static(path.join(__dirname)));
 app.post('/api/create-stars-invoice', async (req, res) => {
     try {
         const { title, description, starsPrice, payload } = req.body;
+
         const response = await axios.post(`https://api.telegram.org/bot${BOT_TOKEN}/createInvoiceLink`, {
             title: title,
             description: description,
@@ -22,6 +23,7 @@ app.post('/api/create-stars-invoice', async (req, res) => {
             currency: 'XTR',
             prices: [{ label: title, amount: starsPrice }]
         });
+
         if (response.data.ok) {
             res.json({ success: true, invoiceLink: response.data.result });
         } else {
@@ -32,7 +34,7 @@ app.post('/api/create-stars-invoice', async (req, res) => {
     }
 });
 
-// Yechib olish so'rovi
+// Yechib olish (Withdraw) so'rovi
 app.post('/api/withdraw', async (req, res) => {
     try {
         const { userId, username, amount } = req.body;
