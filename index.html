@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Realistic GPU Mining Setup</title>
+    <title>GPU Mining Setup</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         :root {
@@ -13,236 +13,439 @@
             --accent-purple: #7928ca;
             --neon-green: #00ff88;
             --gold: #ffb703;
+            --red-fire: #ef4444;
             --text-main: #f1f5f9;
             --text-muted: #64748b;
         }
-
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; user-select: none; }
         body { 
             background: radial-gradient(circle at 50% 20%, #151d30 0%, var(--bg-dark) 85%); 
             color: var(--text-main); 
-            padding: 14px; 
+            padding: 14px 14px 85px 14px; 
             display: flex; 
             flex-direction: column; 
             align-items: center;
             min-height: 100vh;
         }
 
-        /* Tepada balans va tezlik ko'rsatkichlari */
+        /* Tepada umumiy balans */
+        .balance-chip {
+            width: 100%; max-width: 440px; text-align: center;
+            background: linear-gradient(180deg, rgba(255,183,3,0.1) 0%, rgba(17,23,38,0.7) 100%);
+            border: 1px solid rgba(255,183,3,0.25); border-radius: 16px; padding: 12px; margin-bottom: 12px;
+        }
+        .balance-chip h2 { font-size: 26px; font-weight: 800; color: var(--gold); text-shadow: 0 0 12px rgba(255,183,3,0.4); }
+        .stat-label { font-size: 10px; color: var(--text-muted); text-transform: uppercase; }
+
+        /* Bo'limlarni boshqarish */
+        .tab-content { display: none; width: 100%; max-width: 440px; }
+        .tab-content.active { display: block; }
+
+        /* Ferma sahifasi */
         .top-stats {
-            width: 100%; max-width: 420px;
-            display: flex; justify-content: space-between; gap: 10px;
-            margin-bottom: 12px;
+            width: 100%; display: flex; justify-content: space-between; gap: 10px; margin-bottom: 12px;
         }
         .stat-badge {
             flex: 1; background: rgba(17, 23, 38, 0.85); backdrop-filter: blur(8px);
-            border: 1px solid rgba(255,255,255,0.08); border-radius: 12px;
-            padding: 10px; text-align: center;
+            border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 10px; text-align: center;
         }
-        .stat-label { font-size: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
         .stat-val { font-size: 15px; font-weight: 700; color: var(--accent-cyan); margin-top: 2px; }
 
-        .balance-chip {
-            width: 100%; max-width: 420px; text-align: center;
-            background: linear-gradient(180deg, rgba(255,183,3,0.1) 0%, rgba(17,23,38,0.7) 100%);
-            border: 1px solid rgba(255,183,3,0.25); border-radius: 16px; padding: 12px; margin-bottom: 15px;
-        }
-        .balance-chip h2 { font-size: 28px; font-weight: 800; color: var(--gold); text-shadow: 0 0 12px rgba(255,183,3,0.4); }
-
-        /* REALISTIK MINING STOLI VA KOMPYUTER ROOM */
         .room-stage {
-            width: 100%; max-width: 420px; height: 230px;
-            position: relative; background: #0c101c;
-            border-radius: 18px; border: 1px solid #1e293b;
-            overflow: hidden; box-shadow: inset 0 0 40px rgba(0,0,0,0.8), 0 8px 24px rgba(0,0,0,0.4);
+            width: 100%; height: 210px; position: relative; background: #0c101c;
+            border-radius: 18px; border: 1px solid #1e293b; overflow: hidden;
             display: flex; justify-content: center; align-items: flex-end; margin-bottom: 14px;
         }
-
-        /* Neon devor chiroqlari */
         .neon-strip {
             position: absolute; top: 12px; width: 85%; height: 3px;
             background: linear-gradient(90deg, var(--accent-cyan), var(--accent-purple), var(--neon-green));
-            box-shadow: 0 0 15px var(--accent-cyan); border-radius: 2px;
+            box-shadow: 0 0 15px var(--accent-cyan);
         }
-
-        /* Kompyuter Stoli */
         .desk-surface {
-            position: absolute; bottom: 0; width: 100%; height: 60px;
+            position: absolute; bottom: 0; width: 100%; height: 50px;
             background: linear-gradient(180deg, #1e2538 0%, #0d121d 100%);
-            border-top: 4px solid #334155;
-            box-shadow: 0 -4px 15px rgba(0,242,254,0.15);
+            border-top: 3px solid #334155;
         }
-
-        /* Monitor */
         .monitor-wrap {
-            position: absolute; bottom: 50px; left: 35px;
-            width: 170px; height: 115px; background: #000;
-            border: 3px solid #334155; border-radius: 8px;
-            box-shadow: 0 0 20px rgba(0, 242, 254, 0.25);
-            display: flex; flex-direction: column; overflow: hidden;
+            position: absolute; bottom: 42px; left: 30px; width: 160px; height: 105px;
+            background: #000; border: 3px solid #334155; border-radius: 8px;
+            box-shadow: 0 0 16px rgba(0, 242, 254, 0.25); display: flex; flex-direction: column; overflow: hidden;
         }
-        .monitor-stand {
-            position: absolute; bottom: 35px; left: 105px;
-            width: 30px; height: 18px; background: #475569; border-radius: 2px;
-        }
-        .monitor-base {
-            position: absolute; bottom: 28px; left: 85px;
-            width: 70px; height: 8px; background: #334155; border-radius: 4px;
-        }
-
-        /* Monitor ekrani (Mining Terminal) */
         .screen-content {
             background: #050b14; width: 100%; height: 100%; padding: 6px;
             font-family: monospace; font-size: 8px; color: var(--neon-green); line-height: 1.3;
         }
-        .screen-content span { display: block; }
         .blink-txt { animation: blink 1s infinite alternate; }
         @keyframes blink { 0% { opacity: 0.3; } 100% { opacity: 1; } }
 
-        /* Kompyuter Keysi (PC Tower) */
         .pc-case {
-            position: absolute; bottom: 35px; right: 30px;
-            width: 100px; height: 145px;
+            position: absolute; bottom: 30px; right: 30px; width: 95px; height: 135px;
             background: linear-gradient(135deg, #131926 0%, #090d15 100%);
-            border: 2px solid #38bdf8; border-radius: 8px;
-            box-shadow: 0 0 18px rgba(56, 189, 248, 0.3);
+            border: 2px solid #38bdf8; border-radius: 8px; box-shadow: 0 0 15px rgba(56, 189, 248, 0.3);
             padding: 8px; display: flex; flex-direction: column; justify-content: space-between;
         }
-
-        /* RGB Kuler (Fan) */
-        .cooler-fan {
-            width: 44px; height: 44px; border-radius: 50%;
-            border: 2px dashed var(--accent-cyan); margin: 0 auto;
-            animation: spin 0.8s linear infinite;
-            box-shadow: inset 0 0 10px var(--accent-purple);
+        .cooler-fan-mini {
+            width: 36px; height: 36px; border-radius: 50%; border: 2px dashed var(--accent-cyan);
+            margin: 0 auto; animation: spin 0.8s linear infinite;
         }
         @keyframes spin { 100% { transform: rotate(360deg); } }
-
-        /* Keys ichidagi videokartalar (GPU slotlari) */
-        .gpu-rack {
-            display: flex; flex-direction: column; gap: 4px; margin-top: 6px;
-        }
+        .gpu-rack { display: flex; flex-direction: column; gap: 4px; margin-top: 6px; }
         .gpu-slot {
-            width: 100%; height: 12px; background: #1e293b;
-            border-left: 4px solid var(--neon-green); border-radius: 2px;
-            box-shadow: 0 0 6px var(--neon-green);
+            width: 100%; height: 10px; background: #1e293b; border-left: 4px solid var(--neon-green);
+            box-shadow: 0 0 6px var(--neon-green); border-radius: 2px;
         }
 
-        /* Do'kon qismi */
-        .shop-box { width: 100%; max-width: 420px; }
-        .shop-header { font-size: 12px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px; }
+        /* ========================================================
+           REALISTIK VIDEO KARTA DIZAYNI (DO'KON UCHUN)
+           ======================================================== */
+        .section-header { font-size: 13px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 12px; }
 
-        .device-card {
-            background: var(--panel-bg); border: 1px solid #1e293b; border-radius: 12px;
-            padding: 10px 14px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center;
+        .realistic-gpu-card {
+            background: linear-gradient(145deg, #161f33 0%, #0e1424 100%);
+            border: 1px solid #23304b;
+            border-radius: 16px;
+            padding: 12px;
+            margin-bottom: 14px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
         }
-        .device-info h4 { font-size: 13px; font-weight: 600; }
-        .device-info p { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+
+        /* GPU Shroudi (Tashqi metall korpusi) */
+        .gpu-model-visual {
+            width: 100%;
+            height: 82px;
+            background: linear-gradient(90deg, #1b2438 0%, #283552 40%, #1e283d 100%);
+            border-radius: 10px;
+            border: 2px solid #334466;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            padding: 0 16px;
+            box-shadow: inset 0 0 12px rgba(0,0,0,0.8), 0 3px 10px rgba(0,0,0,0.5);
+            overflow: hidden;
+        }
+
+        /* Radiator qovurg'alari teksturasi */
+        .gpu-model-visual::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: repeating-linear-gradient(90deg, transparent, transparent 5px, rgba(0,0,0,0.35) 5px, rgba(0,0,0,0.35) 7px);
+            pointer-events: none;
+        }
+
+        /* PCIe ulagich tishlari (Pastdagi oltin kontaktlar) */
+        .gpu-pcie {
+            position: absolute;
+            bottom: 0;
+            left: 20%;
+            width: 60%;
+            height: 5px;
+            background: repeating-linear-gradient(90deg, #fbbf24 0, #fbbf24 3px, #000 3px, #000 5px);
+            border-top: 1px solid #000;
+        }
+
+        /* Metall orqa plankasi (Bracket) */
+        .gpu-bracket {
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 8px;
+            background: linear-gradient(180deg, #94a3b8 0%, #475569 100%);
+            border-right: 1px solid #1e293b;
+        }
+
+        /* GPU Kulerlari (Fans) */
+        .gpu-fan {
+            width: 54px;
+            height: 54px;
+            border-radius: 50%;
+            background: radial-gradient(circle, #0b0f19 35%, #1f293d 70%);
+            border: 2px solid #475569;
+            position: relative;
+            box-shadow: 0 0 10px rgba(0,0,0,0.8);
+            z-index: 2;
+        }
+        .gpu-fan-blades {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            position: absolute;
+            top: 0; left: 0;
+            border: 3px dashed var(--accent-cyan);
+            animation: spin 0.6s linear infinite;
+        }
+        .fan-center {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 16px; height: 16px;
+            background: radial-gradient(circle, #64748b 0%, #1e293b 100%);
+            border-radius: 50%;
+            box-shadow: 0 0 4px rgba(0,0,0,0.9);
+            z-index: 3;
+        }
+
+        /* RGB Strip */
+        .gpu-rgb-line {
+            position: absolute;
+            top: 6px;
+            left: 20px;
+            right: 20px;
+            height: 3px;
+            background: linear-gradient(90deg, var(--neon-green), var(--accent-cyan), var(--accent-purple));
+            box-shadow: 0 0 8px var(--accent-cyan);
+            border-radius: 2px;
+            z-index: 1;
+        }
+
+        /* VIP Karta dizayni (Qizil Monster uslub) */
+        .gpu-model-visual.vip {
+            border-color: #ef4444;
+            background: linear-gradient(90deg, #2b1115 0%, #3d171e 50%, #220c10 100%);
+        }
+        .gpu-model-visual.vip .gpu-fan-blades {
+            border-color: #ef4444;
+            animation-duration: 0.35s; /* Tezroq aylanadi */
+        }
+        .gpu-model-visual.vip .gpu-rgb-line {
+            background: linear-gradient(90deg, #ff0055, #f59e0b, #ef4444);
+            box-shadow: 0 0 12px #ef4444;
+        }
+
+        /* Karta haqida ma'lumot qatori */
+        .gpu-info-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .gpu-name-tag h4 { font-size: 14px; font-weight: 700; color: #fff; }
+        .gpu-name-tag p { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
 
         .btn-buy {
             background: linear-gradient(135deg, #ffb703, #fb8500); color: #000;
-            border: none; padding: 7px 12px; border-radius: 8px; font-weight: 700; font-size: 12px; cursor: pointer;
+            border: none; padding: 8px 14px; border-radius: 9px; font-weight: 800; font-size: 13px; cursor: pointer;
+        }
+        .btn-buy-vip {
+            background: linear-gradient(135deg, #ef4444, #b91c1c); color: #fff;
+            border: none; padding: 8px 14px; border-radius: 9px; font-weight: 800; font-size: 13px; cursor: pointer;
+            box-shadow: 0 0 12px rgba(239, 68, 68, 0.45);
         }
 
+        /* Hamyon Sahifasi */
+        .wallet-card {
+            background: var(--panel-bg); border: 1px solid #1e293b; border-radius: 14px;
+            padding: 18px; text-align: center; margin-top: 10px;
+        }
         .btn-withdraw {
             width: 100%; background: #10b981; color: #fff; border: none;
-            padding: 11px; border-radius: 10px; font-weight: 700; font-size: 13px; margin-top: 10px; cursor: pointer;
+            padding: 12px; border-radius: 10px; font-weight: 700; font-size: 14px; cursor: pointer;
         }
+
+        /* Pastki menyu */
+        .bottom-nav {
+            position: fixed; bottom: 0; left: 0; right: 0;
+            background: rgba(17, 23, 38, 0.95); backdrop-filter: blur(12px);
+            border-top: 1px solid #1e293b; height: 60px;
+            display: flex; justify-content: space-around; align-items: center; z-index: 100;
+        }
+        .nav-item {
+            display: flex; flex-direction: column; align-items: center;
+            color: var(--text-muted); font-size: 11px; cursor: pointer; border: none; background: none;
+        }
+        .nav-item.active { color: var(--accent-cyan); font-weight: 700; }
+        .nav-item svg { width: 20px; height: 20px; margin-bottom: 3px; fill: currentColor; }
     </style>
 </head>
 <body>
 
-    <!-- Yuqori ko'rsatkichlar -->
-    <div class="top-stats">
-        <div class="stat-badge">
-            <div class="stat-label">Ferma Quvvati</div>
-            <div class="stat-val"><span id="hashrate">0</span> MH/s</div>
-        </div>
-        <div class="stat-badge">
-            <div class="stat-label">Tezlik</div>
-            <div class="stat-val" style="color: var(--neon-green);">+<span id="speed">0.000</span> ⭐/m</div>
-        </div>
-    </div>
-
-    <!-- Balans -->
+    <!-- Doimiy Balans -->
     <div class="balance-chip">
         <div class="stat-label">Balansdagi Stars</div>
         <h2>⭐ <span id="stars-balance">0.0000</span></h2>
     </div>
 
-    <!-- REALISTIK STOL VA KOMPYUTER MAYDONI -->
-    <div class="room-stage">
-        <div class="neon-strip"></div>
-
-        <!-- Monitor oyoqlari -->
-        <div class="monitor-base"></div>
-        <div class="monitor-stand"></div>
-
-        <!-- Monitor -->
-        <div class="monitor-wrap">
-            <div class="screen-content">
-                <span style="color:#38bdf8;">[GPU-MINER v2.4]</span>
-                <span>Connecting to Pool... OK</span>
-                <span style="color:var(--gold);">Total GPUs: <b id="screen-gpu-count">1</b></span>
-                <span class="blink-txt">> MINING ACTIVE...</span>
-                <span style="color:var(--accent-cyan); margin-top:2px;">Shares: 142/0 (100%)</span>
+    <!-- 1-BO'LIM: FERMA / MINING XONASI -->
+    <div id="tab-farm" class="tab-content active">
+        <div class="top-stats">
+            <div class="stat-badge">
+                <div class="stat-label">Ferma Quvvati</div>
+                <div class="stat-val"><span id="hashrate">0</span> MH/s</div>
+            </div>
+            <div class="stat-badge">
+                <div class="stat-label">Tezlik</div>
+                <div class="stat-val" style="color: var(--neon-green);">+<span id="speed">0.000</span> ⭐/m</div>
             </div>
         </div>
 
-        <!-- PC Keysi -->
-        <div class="pc-case">
-            <div class="cooler-fan"></div>
-            <!-- Keys ichidagi videokartalar -->
-            <div class="gpu-rack" id="gpu-visual-rack">
-                <div class="gpu-slot"></div>
+        <div class="room-stage">
+            <div class="neon-strip"></div>
+            <div class="monitor-wrap">
+                <div class="screen-content">
+                    <span style="color:#38bdf8;">[GPU-MINER v2.4]</span>
+                    <span>Pool Status: CONNECTED</span>
+                    <span style="color:var(--gold);">Active GPUs: <b id="screen-gpu-count">1</b></span>
+                    <span class="blink-txt">> MINING IN PROGRESS...</span>
+                </div>
             </div>
+            <div class="pc-case">
+                <div class="cooler-fan-mini"></div>
+                <div class="gpu-rack" id="gpu-visual-rack"></div>
+            </div>
+            <div class="desk-surface"></div>
         </div>
-
-        <!-- Stol sathi -->
-        <div class="desk-surface"></div>
     </div>
 
-    <!-- Do'kon -->
-    <div class="shop-box">
-        <div class="shop-header">🛒 Videokartalar Bo'limi</div>
+    <!-- 2-BO'LIM: REALISTIK VIDEOKARTALAR DO'KONI -->
+    <div id="tab-shop" class="tab-content">
+        <div class="section-header">🛒 Videokartalar Bo'limi</div>
 
-        <!-- 10 Stars -->
-        <div class="device-card">
-            <div class="device-info">
-                <h4>GTX 1660 Super</h4>
-                <p>+30 MH/s | +0.010 ⭐/min</p>
+        <!-- 1. GTX 1660 Super (2 Kulerli) -->
+        <div class="realistic-gpu-card">
+            <div class="gpu-model-visual">
+                <div class="gpu-bracket"></div>
+                <div class="gpu-rgb-line"></div>
+                <div class="gpu-fan"><div class="gpu-fan-blades"></div><div class="fan-center"></div></div>
+                <div class="gpu-fan"><div class="gpu-fan-blades"></div><div class="fan-center"></div></div>
+                <div class="gpu-pcie"></div>
             </div>
-            <button class="btn-buy" onclick="buyGPU('GTX 1660 Super', 10, 30, 0.010)">10 ⭐</button>
+            <div class="gpu-info-row">
+                <div class="gpu-name-tag">
+                    <h4>GTX 1660 Super Twin Fan</h4>
+                    <p>+30 MH/s | +0.010 ⭐/min</p>
+                </div>
+                <button class="btn-buy" onclick="buyGPU('GTX 1660 Super', 10, 30, 0.010)">10 ⭐</button>
+            </div>
         </div>
 
-        <!-- 25 Stars -->
-        <div class="device-card">
-            <div class="device-info">
-                <h4>RTX 3060 Ti</h4>
-                <p>+60 MH/s | +0.025 ⭐/min</p>
+        <!-- 2. RTX 3060 Ti (2 Kulerli RGB) -->
+        <div class="realistic-gpu-card">
+            <div class="gpu-model-visual">
+                <div class="gpu-bracket"></div>
+                <div class="gpu-rgb-line" style="box-shadow: 0 0 10px var(--neon-green);"></div>
+                <div class="gpu-fan"><div class="gpu-fan-blades" style="border-color: var(--neon-green);"></div><div class="fan-center"></div></div>
+                <div class="gpu-fan"><div class="gpu-fan-blades" style="border-color: var(--neon-green);"></div><div class="fan-center"></div></div>
+                <div class="gpu-pcie"></div>
             </div>
-            <button class="btn-buy" onclick="buyGPU('RTX 3060 Ti', 25, 60, 0.025)">25 ⭐</button>
+            <div class="gpu-info-row">
+                <div class="gpu-name-tag">
+                    <h4>RTX 3060 Ti Gaming OC</h4>
+                    <p>+60 MH/s | +0.025 ⭐/min</p>
+                </div>
+                <button class="btn-buy" onclick="buyGPU('RTX 3060 Ti', 25, 60, 0.025)">25 ⭐</button>
+            </div>
         </div>
 
-        <!-- 50 Stars -->
-        <div class="device-card">
-            <div class="device-info">
-                <h4>RTX 4070 Ti</h4>
-                <p>+120 MH/s | +0.060 ⭐/min</p>
+        <!-- 3. RTX 4070 Ti (3 Kulerli) -->
+        <div class="realistic-gpu-card">
+            <div class="gpu-model-visual">
+                <div class="gpu-bracket"></div>
+                <div class="gpu-rgb-line" style="box-shadow: 0 0 12px var(--accent-purple);"></div>
+                <div class="gpu-fan" style="width:48px;height:48px;"><div class="gpu-fan-blades" style="border-color: var(--accent-purple);"></div><div class="fan-center"></div></div>
+                <div class="gpu-fan" style="width:48px;height:48px;"><div class="gpu-fan-blades" style="border-color: var(--accent-purple);"></div><div class="fan-center"></div></div>
+                <div class="gpu-fan" style="width:48px;height:48px;"><div class="gpu-fan-blades" style="border-color: var(--accent-purple);"></div><div class="fan-center"></div></div>
+                <div class="gpu-pcie"></div>
             </div>
-            <button class="btn-buy" onclick="buyGPU('RTX 4070 Ti', 50, 120, 0.060)">50 ⭐</button>
+            <div class="gpu-info-row">
+                <div class="gpu-name-tag">
+                    <h4>RTX 4070 Ti Triple Fan</h4>
+                    <p>+120 MH/s | +0.060 ⭐/min</p>
+                </div>
+                <button class="btn-buy" onclick="buyGPU('RTX 4070 Ti', 50, 120, 0.060)">50 ⭐</button>
+            </div>
         </div>
 
-        <!-- 100 Stars -->
-        <div class="device-card">
-            <div class="device-info">
-                <h4>RTX 4090 OC</h4>
-                <p>+250 MH/s | +0.150 ⭐/min</p>
+        <!-- 4. RTX 4090 OC (3 Kulerli Massiv) -->
+        <div class="realistic-gpu-card">
+            <div class="gpu-model-visual">
+                <div class="gpu-bracket"></div>
+                <div class="gpu-rgb-line" style="box-shadow: 0 0 12px var(--gold);"></div>
+                <div class="gpu-fan" style="width:50px;height:50px;"><div class="gpu-fan-blades" style="border-color: var(--gold);"></div><div class="fan-center"></div></div>
+                <div class="gpu-fan" style="width:50px;height:50px;"><div class="gpu-fan-blades" style="border-color: var(--gold);"></div><div class="fan-center"></div></div>
+                <div class="gpu-fan" style="width:50px;height:50px;"><div class="gpu-fan-blades" style="border-color: var(--gold);"></div><div class="fan-center"></div></div>
+                <div class="gpu-pcie"></div>
             </div>
-            <button class="btn-buy" onclick="buyGPU('RTX 4090 OC', 100, 250, 0.150)">100 ⭐</button>
+            <div class="gpu-info-row">
+                <div class="gpu-name-tag">
+                    <h4>RTX 4090 Extreme Master</h4>
+                    <p>+250 MH/s | +0.150 ⭐/min</p>
+                </div>
+                <button class="btn-buy" onclick="buyGPU('RTX 4090 OC', 100, 250, 0.150)">100 ⭐</button>
+            </div>
         </div>
 
-        <button class="btn-withdraw" onclick="withdrawStars()">Hisobga yechib olish (Withdraw)</button>
+        <!-- 5. RTX 5090 Ti Monster (VIP Qizil Alanga) -->
+        <div class="realistic-gpu-card">
+            <div class="gpu-model-visual vip">
+                <div class="gpu-bracket"></div>
+                <div class="gpu-rgb-line"></div>
+                <div class="gpu-fan" style="width:50px;height:50px;"><div class="gpu-fan-blades"></div><div class="fan-center"></div></div>
+                <div class="gpu-fan" style="width:50px;height:50px;"><div class="gpu-fan-blades"></div><div class="fan-center"></div></div>
+                <div class="gpu-fan" style="width:50px;height:50px;"><div class="gpu-fan-blades"></div><div class="fan-center"></div></div>
+                <div class="gpu-pcie"></div>
+            </div>
+            <div class="gpu-info-row">
+                <div class="gpu-name-tag">
+                    <h4 style="color: #f87171;">🔥 RTX 5090 Ti Monster OC</h4>
+                    <p>+700 MH/s | +0.450 ⭐/min</p>
+                </div>
+                <button class="btn-buy-vip" onclick="buyGPU('RTX 5090 Ti Monster', 250, 700, 0.450)">250 ⭐</button>
+            </div>
+        </div>
+
+        <!-- 6. Mining Rig ASIC Pro (Ko'p Kulerli Quvvat) -->
+        <div class="realistic-gpu-card">
+            <div class="gpu-model-visual vip" style="background: linear-gradient(90deg, #181124 0%, #2f1742 50%, #150a21 100%); border-color: #a855f7;">
+                <div class="gpu-bracket"></div>
+                <div class="gpu-rgb-line" style="background: linear-gradient(90deg, #a855f7, #ec4899, #38bdf8); box-shadow: 0 0 14px #a855f7;"></div>
+                <div class="gpu-fan" style="width:46px;height:46px;"><div class="gpu-fan-blades" style="border-color:#a855f7;"></div><div class="fan-center"></div></div>
+                <div class="gpu-fan" style="width:46px;height:46px;"><div class="gpu-fan-blades" style="border-color:#ec4899;"></div><div class="fan-center"></div></div>
+                <div class="gpu-fan" style="width:46px;height:46px;"><div class="gpu-fan-blades" style="border-color:#38bdf8;"></div><div class="fan-center"></div></div>
+                <div class="gpu-pcie"></div>
+            </div>
+            <div class="gpu-info-row">
+                <div class="gpu-name-tag">
+                    <h4 style="color: #c084fc;">⚡️ Mining Rig ASIC Pro</h4>
+                    <p>+1800 MH/s | +1.200 ⭐/min</p>
+                </div>
+                <button class="btn-buy-vip" style="background: linear-gradient(135deg, #a855f7, #7c3aed); box-shadow: 0 0 12px rgba(168, 85, 247, 0.45);" onclick="buyGPU('Mining Rig ASIC Pro', 500, 1800, 1.200)">500 ⭐</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3-BO'LIM: PUL YECHISH / HAMYON -->
+    <div id="tab-wallet" class="tab-content">
+        <div class="section-header">💳 Mablag'ni Yechib Olish</div>
+        
+        <div class="wallet-card">
+            <div style="font-size: 32px; margin-bottom: 8px;">💼</div>
+            <h3>Yechib olish shartlari</h3>
+            <p style="font-size: 12px; color: var(--text-muted); margin: 6px 0 14px 0;">
+                Minimal yechish summasi: <b style="color: var(--gold);">50 ⭐</b>.<br>
+                So'rov yuborilgach, hisobingiz admin tomonidan tekshirilib tasdiqlanadi.
+            </p>
+            <button class="btn-withdraw" onclick="withdrawStars()">Barcha Stars'ni Yechish</button>
+        </div>
+    </div>
+
+    <!-- PASTKI NAVIGATSIYA PANELI -->
+    <div class="bottom-nav">
+        <button class="nav-item active" onclick="switchTab('farm', this)">
+            <svg viewBox="0 0 24 24"><path d="M4 6h16v10H4V6zm-2 12h20v2H2v-2z"/></svg>
+            <span>Ferma</span>
+        </button>
+        <button class="nav-item" onclick="switchTab('shop', this)">
+            <svg viewBox="0 0 24 24"><path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.08-.14.12-.31.12-.48 0-.55-.45-1-1-1H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/></svg>
+            <span>Do'kon</span>
+        </button>
+        <button class="nav-item" onclick="switchTab('wallet', this)">
+            <svg viewBox="0 0 24 24"><path d="M21 18v1c0 1.1-.9 2-2 2H5c-1.11 0-2-.9-2-2V5c0-1.1.89-2 2-2h14c1.1 0 2 .9 2 2v1h-9c-1.11 0-2 .9-2 2v8c0 1.1.89 2 2 2h9zm-9-2h10V8H12v8zm4-2.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg>
+            <span>Hamyon</span>
+        </button>
     </div>
 
     <script>
@@ -255,12 +458,19 @@
         let gpuCount = parseInt(localStorage.getItem('gpu_count')) || 0;
         let hasBonus = localStorage.getItem('bonus_received');
 
-        // Bepul birinchi videokarta bonusi
         if (!hasBonus) {
             hashrate += 15;
             speed += 0.005;
             gpuCount += 1;
             localStorage.setItem('bonus_received', 'true');
+        }
+
+        function switchTab(tabId, el) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(btn => btn.classList.remove('active'));
+            
+            document.getElementById('tab-' + tabId).classList.add('active');
+            el.classList.add('active');
         }
 
         function updateUI() {
@@ -269,14 +479,13 @@
             document.getElementById('speed').innerText = speed.toFixed(3);
             document.getElementById('screen-gpu-count').innerText = gpuCount;
 
-            // PC keys ichidagi videokartalarni vizual chizish
             const rack = document.getElementById('gpu-visual-rack');
             rack.innerHTML = '';
-            const visibleCards = Math.min(gpuCount, 5); // Maksimal 5 ta slot chizamiz
-            for(let i = 0; i < visibleCards; i++) {
-                const slot = document.createElement('div');
-                slot.className = 'gpu-slot';
-                rack.appendChild(slot);
+            const visible = Math.min(gpuCount, 5);
+            for(let i = 0; i < visible; i++) {
+                const s = document.createElement('div');
+                s.className = 'gpu-slot';
+                rack.appendChild(s);
             }
 
             localStorage.setItem('stars_bal', balance);
@@ -285,7 +494,6 @@
             localStorage.setItem('gpu_count', gpuCount);
         }
 
-        // Avtomatik daromad hisoblash
         setInterval(() => {
             if (speed > 0) {
                 balance += (speed / 60);
@@ -293,7 +501,6 @@
             }
         }, 1000);
 
-        // Stars bilan yangi GPU sotib olish
         async function buyGPU(name, starsCost, addedHash, addedSpeed) {
             try {
                 const res = await fetch('/api/create-stars-invoice', {
@@ -315,18 +522,17 @@
                             speed += addedSpeed;
                             gpuCount += 1;
                             updateUI();
-                            alert(`${name} kompyuterga o'rnatildi! Mining tezligi oshdi.`);
+                            alert(`${name} xarid qilindi!`);
                         }
                     });
                 } else {
-                    alert("Xatolik: " + (data.error || "Invoice yaratilmadi"));
+                    alert("Xato: " + (data.error || "Invoice yaratilmadi"));
                 }
             } catch (e) {
-                alert("Tarmoq xatosi: " + e.message);
+                alert("Xatolik: " + e.message);
             }
         }
 
-        // Yechish so'rovi
         async function withdrawStars() {
             if (balance < 50) {
                 alert("Minimal yechish: 50 ⭐");
