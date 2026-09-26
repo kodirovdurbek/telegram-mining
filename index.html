@@ -6,7 +6,6 @@
     <title>3D Gamer Mining Room</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        /* 1. CYBER NEON TEMASI (DEFAULT) */
         :root {
             --theme-bg: radial-gradient(circle at 65% 25%, #3b105a 0%, #1c062c 45%, #090214 100%);
             --theme-neon: #ff007f;
@@ -20,7 +19,6 @@
             --text-muted: #a78bfa;
         }
 
-        /* 2. MATRIX HACKER TEMASI */
         body.theme-matrix {
             --theme-bg: radial-gradient(circle at 50% 20%, #032b16 0%, #02170c 50%, #010a05 100%);
             --theme-neon: #00ff88;
@@ -31,7 +29,6 @@
             --text-muted: #6ee7b7;
         }
 
-        /* 3. LAVA FORGE TEMASI */
         body.theme-lava {
             --theme-bg: radial-gradient(circle at 65% 25%, #4a0e0e 0%, #240505 50%, #0d0101 100%);
             --theme-neon: #ff3b00;
@@ -56,7 +53,6 @@
             transition: background 0.4s ease;
         }
 
-        /* YUQORI HEADER VA TUGMALAR */
         .top-bar {
             width: 100%; max-width: 440px; padding: 10px 14px;
             display: flex; justify-content: space-between; align-items: center;
@@ -70,7 +66,6 @@
             display: flex; align-items: center; gap: 4px;
         }
 
-        /* DIZAYN TANLASH POP-UP MODALI */
         .theme-selector-bar {
             width: calc(100% - 24px); max-width: 416px;
             background: rgba(18, 10, 32, 0.9); border: 1px solid rgba(167, 139, 250, 0.3);
@@ -86,7 +81,6 @@
         }
         .theme-btn.active { border-color: var(--theme-neon); background: rgba(255,255,255,0.15); }
 
-        /* HUD STATS (XONA USTIDAGI GLASS PANELS) */
         .hud-stats {
             width: calc(100% - 24px); max-width: 416px;
             display: flex; justify-content: space-between; gap: 8px;
@@ -100,7 +94,6 @@
         .hud-label { font-size: 9px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
         .hud-val { font-size: 14px; font-weight: 800; color: var(--theme-accent); margin-top: 2px; }
 
-        /* BALANS */
         .balance-pill {
             width: calc(100% - 24px); max-width: 416px;
             background: linear-gradient(180deg, rgba(255, 183, 3, 0.15) 0%, rgba(18, 10, 32, 0.85) 100%);
@@ -113,9 +106,9 @@
         .tab-content { display: none; width: 100%; max-width: 440px; }
         .tab-content.active { display: block; }
 
-        /* ================= 3D GAMER XONASI SAHNASI ================= */
+        /* ================= 3D GAMER XONASI VA DEVORDAGI KRIPTO POSTERLAR ================= */
         .scene-viewport {
-            width: 100%; height: calc(100vh - 230px); min-height: 420px;
+            width: 100%; height: calc(100vh - 230px); min-height: 440px;
             position: relative; overflow: hidden;
             background: var(--theme-bg);
             display: flex; justify-content: center; align-items: flex-end;
@@ -131,17 +124,44 @@
             pointer-events: none;
         }
         .wall-neon {
-            position: absolute; top: 22px; left: 18px;
-            font-size: 20px; font-weight: 900; color: var(--theme-neon);
-            text-shadow: 0 0 10px var(--theme-neon), 0 0 30px var(--theme-neon);
+            position: absolute; top: 18px; left: 16px;
+            font-size: 19px; font-weight: 900; color: var(--theme-neon);
+            text-shadow: 0 0 10px var(--theme-neon), 0 0 28px var(--theme-neon);
             transform: rotate(-10deg); letter-spacing: 2px;
         }
-        .wall-frame {
-            position: absolute; top: 20px; right: 28px; width: 48px; height: 62px;
-            background: #140524; border: 2px solid rgba(255,255,255,0.3); border-radius: 6px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.8), 0 0 12px var(--theme-neon);
-            display: flex; align-items: center; justify-content: center; font-size: 18px;
+
+        /* DEVORDAGI KRIPTO VALYUTALAR RAMKALARI */
+        .crypto-posters-wall {
+            position: absolute; top: 12px; right: 12px;
+            display: flex; gap: 8px; z-index: 5;
         }
+        .crypto-poster {
+            width: 42px; height: 58px; background: rgba(10, 5, 20, 0.85);
+            border-radius: 6px; border: 1.5px solid #fff;
+            display: flex; flex-direction: column; align-items: center; justify-content: space-around;
+            padding: 3px 0; box-shadow: 0 4px 15px rgba(0,0,0,0.8);
+            transform: perspective(300px) rotateY(-8deg);
+            transition: transform 0.3s;
+        }
+        .crypto-poster:hover { transform: scale(1.08); }
+        .crypto-icon { font-size: 16px; font-weight: 900; }
+        .crypto-label { font-size: 7px; font-weight: 800; letter-spacing: 0.5px; }
+
+        /* Bitcoin */
+        .poster-btc { border-color: #ff9900; box-shadow: 0 0 12px rgba(255, 153, 0, 0.4); }
+        .poster-btc .crypto-icon, .poster-btc .crypto-label { color: #ff9900; }
+
+        /* TON */
+        .poster-ton { border-color: #0098ea; box-shadow: 0 0 12px rgba(0, 152, 234, 0.45); }
+        .poster-ton .crypto-icon, .poster-ton .crypto-label { color: #0098ea; }
+
+        /* Ethereum */
+        .poster-eth { border-color: #a855f7; box-shadow: 0 0 12px rgba(168, 85, 247, 0.45); }
+        .poster-eth .crypto-icon, .poster-eth .crypto-label { color: #a855f7; }
+
+        /* Solana */
+        .poster-sol { border-color: #14f195; box-shadow: 0 0 12px rgba(20, 241, 149, 0.4); }
+        .poster-sol .crypto-icon, .poster-sol .crypto-label { color: #14f195; }
 
         .wood-floor {
             position: absolute; bottom: 0; width: 100%; height: 160px;
@@ -151,59 +171,84 @@
             transform: rotateX(26deg); transform-origin: bottom;
         }
 
-        /* Qizil / Tematik Kantli Stol */
-        .pro-desk {
-            position: absolute; bottom: 20px; width: 90%; height: 155px;
-            background: linear-gradient(180deg, #161020 0%, #0b0712 100%);
-            border-top: 5px solid var(--theme-desk-edge); border-radius: 18px 18px 0 0;
-            box-shadow: 0 -8px 30px var(--theme-desk-glow);
-            display: flex; justify-content: center;
-        }
-        .desk-edge-glow {
-            position: absolute; top: 0; left: 0; right: 0; height: 2px;
-            background: #fff; box-shadow: 0 0 12px var(--theme-desk-edge);
-        }
-
-        .mousepad {
-            position: absolute; top: 16px; width: 68%; height: 50px;
-            background: #09090b; border: 1.5px solid var(--theme-accent);
-            border-radius: 8px; box-shadow: 0 0 12px rgba(0, 242, 254, 0.25);
-            display: flex; align-items: center; justify-content: center; gap: 12px;
-        }
-        .mech-keyboard {
-            width: 82px; height: 26px; background: #18181b; border: 1px solid #3f3f46;
-            border-radius: 4px; box-shadow: 0 0 8px var(--theme-neon);
-            background-image: repeating-linear-gradient(90deg, transparent, transparent 4px, rgba(255,255,255,0.12) 4px, rgba(255,255,255,0.12) 6px);
-        }
-        .gaming-mouse {
-            width: 12px; height: 18px; background: #27272a; border-radius: 6px;
-            border: 1px solid var(--theme-accent); box-shadow: 0 0 6px var(--theme-accent);
-        }
-
         /* 3D MONITORLAR */
         .monitors-array {
             position: absolute; bottom: 175px; width: 100%;
-            display: flex; justify-content: center; align-items: flex-end; gap: 6px;
+            display: flex; justify-content: center; align-items: flex-end; gap: 4px;
             z-index: 10;
         }
+        
         .side-monitor {
-            width: 48px; height: 125px; background: #000;
-            border: 2px solid #334155; border-radius: 6px;
-            padding: 4px 2px; overflow: hidden;
-            box-shadow: 0 0 18px rgba(0, 255, 136, 0.35);
+            width: 75px; height: 130px; 
+            background: #020611; border: 2px solid #334155; 
+            border-radius: 7px; overflow: hidden;
+            display: flex; flex-direction: column;
+            box-shadow: 0 0 16px rgba(0,0,0,0.8);
         }
-        .side-monitor.left { transform: perspective(400px) rotateY(22deg); }
-        .side-monitor.right { transform: perspective(400px) rotateY(-22deg); }
-        .matrix-code {
-            font-size: 6px; line-height: 1.3; color: var(--theme-code); font-family: monospace;
-            animation: matrixRoll 3s linear infinite;
+        .side-monitor.left { 
+            transform: perspective(400px) rotateY(18deg);
+            border-color: var(--theme-code);
+            box-shadow: 0 0 16px rgba(0, 255, 136, 0.3);
         }
-        @keyframes matrixRoll { 0% { transform: translateY(0); } 100% { transform: translateY(-15px); } }
+        .side-monitor.right { 
+            transform: perspective(400px) rotateY(-18deg);
+            border-color: var(--theme-accent);
+            box-shadow: 0 0 16px rgba(0, 242, 254, 0.35);
+        }
 
+        /* CHAP MONITOR: MINER */
+        .miner-display {
+            width: 100%; height: 100%; padding: 4px 3px;
+            display: flex; flex-direction: column; align-items: center; justify-content: space-between;
+            background: radial-gradient(circle at 50% 30%, #062b1b 0%, #020b07 100%);
+        }
+        .miner-badge { font-size: 7px; color: var(--theme-code); font-family: monospace; font-weight: 800; }
+        .miner-avatar-art {
+            width: 38px; height: 38px; border-radius: 50%;
+            background: #0d1f18; border: 1.5px solid var(--theme-code);
+            display: flex; align-items: center; justify-content: center; font-size: 20px;
+            box-shadow: 0 0 10px rgba(0,255,136,0.4);
+            animation: minerTyping 1.2s infinite alternate ease-in-out;
+        }
+        @keyframes minerTyping {
+            0% { transform: translateY(0) scale(0.98); }
+            100% { transform: translateY(-3px) scale(1.04); }
+        }
+        .miner-matrix-lines {
+            width: 100%; font-size: 5.5px; font-family: monospace; color: var(--theme-code);
+            line-height: 1.2; text-align: center;
+        }
+
+        /* O'NG MONITOR: FOYDALANUVCHI */
+        .user-display {
+            width: 100%; height: 100%; padding: 6px 3px;
+            display: flex; flex-direction: column; align-items: center; justify-content: space-around;
+            background: radial-gradient(circle at 50% 30%, #0c1a36 0%, #030814 100%);
+        }
+        .user-photo-frame {
+            width: 44px; height: 44px; border-radius: 50%;
+            border: 2px solid var(--theme-accent);
+            box-shadow: 0 0 12px var(--theme-accent);
+            overflow: hidden; display: flex; align-items: center; justify-content: center;
+            background: #1e293b;
+        }
+        .user-photo-frame img { width: 100%; height: 100%; object-fit: cover; }
+        .user-photo-fallback { font-size: 20px; font-weight: 900; color: #fff; }
+        .user-name-tag {
+            font-size: 8px; font-weight: 800; color: #fff; text-align: center;
+            max-width: 70px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
+        .user-status-pill {
+            font-size: 6px; padding: 2px 4px; border-radius: 4px;
+            background: rgba(0, 242, 254, 0.2); border: 0.5px solid var(--theme-accent);
+            color: var(--theme-accent); font-weight: 800;
+        }
+
+        /* O'RTA ASOSIY MONITOR */
         .main-monitor {
             width: 155px; height: 105px; background: #020617;
             border: 3px solid #475569; border-radius: 10px;
-            box-shadow: 0 0 30px rgba(0, 242, 254, 0.5), inset 0 0 20px rgba(0,0,0,0.8);
+            box-shadow: 0 0 30px rgba(0, 242, 254, 0.4), inset 0 0 20px rgba(0,0,0,0.8);
             display: flex; flex-direction: column; align-items: center; justify-content: center;
             position: relative;
         }
@@ -223,9 +268,9 @@
         }
         @keyframes pulseText { 0% { opacity: 0.3; } 100% { opacity: 1; } }
 
-        /* GEYMER KRESLOSI */
+        /* GEYMER STOLI VA KRESLO */
         .racing-chair {
-            position: absolute; bottom: 30px; left: 18px; width: 68px; height: 150px;
+            position: absolute; bottom: 30px; left: 16px; width: 66px; height: 150px;
             background: #080311; border: 2.5px solid #cbd5e1; border-radius: 18px 18px 8px 8px;
             box-shadow: inset 0 0 15px rgba(255,255,255,0.2), 0 12px 30px rgba(0,0,0,0.9);
             z-index: 12; display: flex; flex-direction: column; align-items: center;
@@ -235,17 +280,44 @@
             margin-top: 6px; font-size: 8px; color: #fff; text-align: center; line-height: 19px; font-weight: 900;
         }
         .chair-spine {
-            width: 50px; height: 72px; background: #130924; border-radius: 8px; margin-top: 6px;
+            width: 48px; height: 72px; background: #130924; border-radius: 8px; margin-top: 6px;
             border-left: 4px solid var(--theme-desk-edge); border-right: 4px solid var(--theme-desk-edge);
             box-shadow: inset 0 0 10px #000;
         }
         .chair-stand {
-            position: absolute; bottom: -10px; width: 50px; height: 10px; background: #334155; border-radius: 5px;
+            position: absolute; bottom: -10px; width: 48px; height: 10px; background: #334155; border-radius: 5px;
         }
 
-        /* KEYS (RIG) */
+        .pro-desk {
+            position: absolute; bottom: 20px; width: 92%; height: 155px;
+            background: linear-gradient(180deg, #161020 0%, #0b0712 100%);
+            border-top: 5px solid var(--theme-desk-edge); border-radius: 18px 18px 0 0;
+            box-shadow: 0 -8px 30px var(--theme-desk-glow);
+            display: flex; justify-content: center;
+        }
+        .desk-edge-glow {
+            position: absolute; top: 0; left: 0; right: 0; height: 2px;
+            background: #fff; box-shadow: 0 0 12px var(--theme-desk-edge);
+        }
+        .mousepad {
+            position: absolute; top: 16px; width: 70%; height: 50px;
+            background: #09090b; border: 1.5px solid var(--theme-accent);
+            border-radius: 8px; box-shadow: 0 0 12px rgba(0, 242, 254, 0.25);
+            display: flex; align-items: center; justify-content: center; gap: 12px;
+        }
+        .mech-keyboard {
+            width: 82px; height: 26px; background: #18181b; border: 1px solid #3f3f46;
+            border-radius: 4px; box-shadow: 0 0 8px var(--theme-neon);
+            background-image: repeating-linear-gradient(90deg, transparent, transparent 4px, rgba(255,255,255,0.12) 4px, rgba(255,255,255,0.12) 6px);
+        }
+        .gaming-mouse {
+            width: 12px; height: 18px; background: #27272a; border-radius: 6px;
+            border: 1px solid var(--theme-accent); box-shadow: 0 0 6px var(--theme-accent);
+        }
+
+        /* KOMPYUTER KEYSI */
         .futuristic-rig {
-            position: absolute; bottom: 30px; right: 24px; width: 72px; height: 120px;
+            position: absolute; bottom: 30px; right: 20px; width: 74px; height: 120px;
             background: linear-gradient(135deg, #1e293b 0%, #090d16 100%);
             border: 2.5px solid var(--theme-accent); border-radius: 14px;
             box-shadow: 0 0 25px rgba(0, 242, 254, 0.5);
@@ -318,7 +390,7 @@
             padding: 13px; border-radius: 10px; font-weight: 800; font-size: 14px; cursor: pointer;
         }
 
-        /* PASTKI MENYU */
+        /* PASTKI NAVIGATSIYA */
         .bottom-nav {
             position: fixed; bottom: 0; left: 0; right: 0;
             background: rgba(10, 4, 18, 0.95); backdrop-filter: blur(14px);
@@ -339,18 +411,16 @@
     <div class="top-bar">
         <div style="font-size: 12px; font-weight: 800; color: var(--theme-neon);">⚡️ MINING ROOM</div>
         <div class="header-actions">
-            <!-- Dizayn Tanlash Tugmasi -->
             <button class="action-chip-btn" onclick="toggleThemePanel()">
                 🎨 <span id="txt-theme-btn">Dizayn</span>
             </button>
-            <!-- Til Tanlash Tugmasi -->
             <button class="action-chip-btn" onclick="toggleLanguage()">
                 <span id="lang-flag">🇷🇺</span> <span id="lang-name">RU</span>
             </button>
         </div>
     </div>
 
-    <!-- DIZAYN TANLASH PANELCHASI (3 XIL VARIANT) -->
+    <!-- DIZAYN TANLASH PANELCHASI -->
     <div class="theme-selector-bar" id="theme-selector">
         <button class="theme-btn active" id="btn-theme-neon" onclick="selectTheme('neon')">🌸 Cyber Neon</button>
         <button class="theme-btn" id="btn-theme-matrix" onclick="selectTheme('matrix')">💚 Matrix</button>
@@ -380,26 +450,67 @@
         <div class="scene-viewport">
             <div class="brick-accent"></div>
             <div class="wall-neon" id="scene-wall-neon">MINING</div>
-            <div class="wall-frame">🎮</div>
+
+            <!-- DEVORDAGI KRIPTO VALYUTALAR PLAKATLARI (BTC, TON, ETH, SOL) -->
+            <div class="crypto-posters-wall">
+                <div class="crypto-poster poster-btc">
+                    <div class="crypto-icon">₿</div>
+                    <div class="crypto-label">BTC</div>
+                </div>
+                <div class="crypto-poster poster-ton">
+                    <div class="crypto-icon">💎</div>
+                    <div class="crypto-label">TON</div>
+                </div>
+                <div class="crypto-poster poster-eth">
+                    <div class="crypto-icon">Ξ</div>
+                    <div class="crypto-label">ETH</div>
+                </div>
+                <div class="crypto-poster poster-sol">
+                    <div class="crypto-icon">◎</div>
+                    <div class="crypto-label">SOL</div>
+                </div>
+            </div>
 
             <div class="wood-floor"></div>
 
-            <!-- 3D Uchlik Monitor -->
+            <!-- 3D UCHLIK MONITOR PANORAMASI -->
             <div class="monitors-array">
+                
+                <!-- 1. CHAP MONITOR: MINER -->
                 <div class="side-monitor left">
-                    <div class="matrix-code">0101<br>HASH<br>POOL<br>OK<br>1010<br>SYS<br>99%<br>DIFF<br>ETH<br>BLOCK<br>OK</div>
+                    <div class="miner-display">
+                        <div class="miner-badge">● MINER PRO</div>
+                        <div class="miner-avatar-art">👨‍💻</div>
+                        <div class="miner-matrix-lines">
+                            HASH: OK<br>
+                            BLOCK #418<br>
+                            SHARES: 99%<br>
+                            STATUS: ACTIVE
+                        </div>
+                    </div>
                 </div>
+
+                <!-- 2. O'RTA ASOSIY MONITOR -->
                 <div class="main-monitor">
                     <div class="live-clock-card" id="live-clock">08:31</div>
                     <div class="live-status">> MINING ACTIVE</div>
                     <div class="monitor-neck"></div>
                 </div>
+
+                <!-- 3. O'NG MONITOR: FOYDALANUVCHI -->
                 <div class="side-monitor right">
-                    <div class="matrix-code">RTX<br>ON<br>DIFF<br>FAST<br>GPU1<br>100%<br>TEMP<br>52C<br>LOAD<br>VRAM<br>MAX</div>
+                    <div class="user-display">
+                        <div class="user-photo-frame" id="user-avatar-box">
+                            <span class="user-photo-fallback" id="user-initial">U</span>
+                        </div>
+                        <div class="user-name-tag" id="user-display-name">Player</div>
+                        <div class="user-status-pill">⭐ PRO MINER</div>
+                    </div>
                 </div>
+
             </div>
 
-            <!-- Geymer Kreslosi -->
+            <!-- Kreslo -->
             <div class="racing-chair">
                 <div class="chair-pillow">PRO</div>
                 <div class="chair-spine"></div>
@@ -415,7 +526,7 @@
                 </div>
             </div>
 
-            <!-- Stol ostidagi Keys -->
+            <!-- PC Keysi -->
             <div class="futuristic-rig">
                 <div class="rgb-fan"></div>
                 <div class="rig-gpus" id="gpu-visual-rack"></div>
@@ -520,7 +631,7 @@
         </div>
     </div>
 
-    <!-- PASTKI MENYU -->
+    <!-- PASTKI NAVIGATSIYA -->
     <div class="bottom-nav">
         <button class="nav-item active" onclick="switchTab('farm', this)">
             <svg viewBox="0 0 24 24"><path d="M4 6h16v10H4V6zm-2 12h20v2H2v-2z"/></svg>
@@ -540,7 +651,24 @@
         const tg = window.Telegram?.WebApp;
         if (tg) { tg.ready(); tg.expand(); }
 
-        // ================= DIZAYN (THEME) BOSHQARUVI =================
+        // Telegram foydalanuvchisini o'ng monitorga chiqarish
+        const user = tg?.initDataUnsafe?.user || {};
+        const userName = user.first_name || user.username || "Gamer";
+        const photoUrl = user.photo_url;
+
+        const nameEl = document.getElementById('user-display-name');
+        if (nameEl) nameEl.innerText = userName;
+
+        const avatarBox = document.getElementById('user-avatar-box');
+        if (avatarBox) {
+            if (photoUrl) {
+                avatarBox.innerHTML = `<img src="${photoUrl}" alt="Avatar">`;
+            } else {
+                avatarBox.innerHTML = `<span class="user-photo-fallback">${userName.charAt(0).toUpperCase()}</span>`;
+            }
+        }
+
+        // Dizayn mavzusi (Theme)
         let currentTheme = localStorage.getItem('user_room_theme') || 'neon';
 
         function applyTheme(theme) {
@@ -564,17 +692,16 @@
 
         function selectTheme(theme) {
             applyTheme(theme);
-            toggleThemePanel(); // Tanlangach panelni yopish
+            toggleThemePanel();
         }
 
         function toggleThemePanel() {
             const panel = document.getElementById('theme-selector');
             panel.classList.toggle('show');
         }
-
         applyTheme(currentTheme);
 
-        // ================= TIL SOZLAMALARI =================
+        // Til sozlamalari
         const translations = {
             uz: {
                 flag: "🇷🇺",
@@ -645,7 +772,7 @@
         }
         applyLanguage();
 
-        // ================= ASOSIY O'YIN HISOBI =================
+        // Asosiy hisoblar
         let balance = parseFloat(localStorage.getItem('stars_bal')) || 0;
         let hashrate = parseInt(localStorage.getItem('user_hashrate')) || 0;
         let speed = parseFloat(localStorage.getItem('user_speed')) || 0;
@@ -742,7 +869,6 @@
                 alert(translations[userLang].minWithdrawMsg);
                 return;
             }
-            const user = tg.initDataUnsafe?.user || {};
             const res = await fetch('/api/withdraw', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
