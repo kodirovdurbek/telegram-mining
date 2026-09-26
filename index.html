@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Gamer Mining Room</title>
+    <title>Realistic Gamer Mining Setup</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         :root {
@@ -30,7 +30,6 @@
             min-height: 100vh;
         }
 
-        /* Yuqori Balans */
         .balance-chip {
             width: 100%; max-width: 440px; text-align: center;
             background: linear-gradient(180deg, rgba(247, 37, 133, 0.15) 0%, rgba(15, 7, 30, 0.85) 100%);
@@ -53,117 +52,162 @@
         .stat-val { font-size: 15px; font-weight: 700; color: var(--neon-blue); margin-top: 2px; }
 
         /* ========================================================
-           SURATDAGI REALISTIK GAMER ROOM (YANGILANGAN DIZAYN)
+           KATTALASHTIRILGAN REALISTIK 3D GAMER ROOM
            ======================================================== */
         .room-scene {
-            width: 100%; height: 270px; position: relative;
-            background: linear-gradient(135deg, #1f0b3b 0%, #100521 100%);
-            border-radius: 20px; border: 1.5px solid rgba(247, 37, 133, 0.35);
-            overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.6), inset 0 0 50px rgba(157, 78, 221, 0.3);
+            width: 100%; height: 360px; position: relative;
+            background: radial-gradient(circle at 75% 25%, #3c126d 0%, #17072d 55%, #0d041c 100%);
+            border-radius: 24px; border: 1.5px solid rgba(247, 37, 133, 0.4);
+            overflow: hidden; box-shadow: 0 14px 40px rgba(0,0,0,0.8), inset 0 0 60px rgba(157, 78, 221, 0.35);
             display: flex; justify-content: center; align-items: flex-end; margin-bottom: 14px;
+            perspective: 800px;
         }
 
-        /* Devordagi neon yozuv va plakatlar */
+        /* Yog'och pol (Suratdagi laminat) */
+        .floor-wood {
+            position: absolute; bottom: 0; left: 0; right: 0; height: 110px;
+            background: linear-gradient(180deg, #12071a 0%, #08030d 100%);
+            background-image: repeating-linear-gradient(90deg, transparent 0, transparent 40px, rgba(255,255,255,0.02) 40px, rgba(255,255,255,0.02) 41px);
+            border-top: 1px solid rgba(247, 37, 133, 0.2);
+        }
+
+        /* Devordagi neon & san'at plakatlari */
         .wall-neon-sign {
-            position: absolute; top: 18px; left: 14px;
-            color: #ff007f; font-weight: 900; font-size: 14px; text-shadow: 0 0 12px #ff007f, 0 0 25px #ff007f;
-            transform: rotate(-8deg); letter-spacing: 1px;
+            position: absolute; top: 22px; left: 18px;
+            color: #ff007f; font-weight: 900; font-size: 16px; text-shadow: 0 0 15px #ff007f, 0 0 30px #ff007f;
+            transform: rotate(-7deg); letter-spacing: 2px;
         }
         .wall-poster {
-            position: absolute; width: 38px; height: 50px;
-            background: #110826; border: 1.5px solid rgba(255,255,255,0.3); border-radius: 4px;
-            box-shadow: 0 0 10px rgba(247,37,133,0.3); display: flex; align-items: center; justify-content: center; font-size: 12px;
+            position: absolute; width: 44px; height: 58px;
+            background: linear-gradient(135deg, #1b0933, #0b0314);
+            border: 2px solid rgba(255,255,255,0.35); border-radius: 5px;
+            box-shadow: 0 4px 15px rgba(247,37,133,0.35); display: flex; align-items: center; justify-content: center; font-size: 14px;
         }
 
-        /* Kreslo */
-        .gamer-chair {
-            position: absolute; bottom: 8px; left: 14px; width: 46px; height: 105px;
-            background: #080312; border: 2px solid #fff; border-radius: 14px 14px 4px 4px;
-            box-shadow: inset 0 0 12px rgba(255,255,255,0.2), 0 5px 15px rgba(0,0,0,0.85);
-            z-index: 6; display: flex; flex-direction: column; align-items: center;
-        }
-        .chair-headrest {
-            width: 26px; height: 15px; background: #1e1133; border: 1.5px solid #fff; border-radius: 4px; margin-top: 4px;
-            font-size: 6px; color: #fff; text-align: center; line-height: 13px; font-weight: 800;
-        }
-        .chair-body {
-            width: 34px; height: 48px; background: #120924; border-radius: 4px; margin-top: 4px;
-            border-left: 3px solid #ef4444; border-right: 3px solid #ef4444;
-        }
-        .chair-base {
-            position: absolute; bottom: -5px; width: 36px; height: 5px; background: #334155; border-radius: 3px;
-        }
-
-        /* Stol (Qizil qirrali gamer desk) */
+        /* Gamer Stoli (Kattaroq, massiv va qizil neon qirrali) */
         .gamer-desk {
-            position: absolute; bottom: 0; width: 86%; height: 95px;
-            background: #090312; border-top: 4px solid #ef4444;
-            box-shadow: 0 -4px 20px rgba(239, 68, 68, 0.4);
-            border-radius: 12px 12px 0 0;
+            position: absolute; bottom: 0; width: 92%; height: 135px;
+            background: linear-gradient(180deg, #1a1523 0%, #0d0a14 100%);
+            border-top: 5px solid #ef4444;
+            box-shadow: 0 -6px 25px rgba(239, 68, 68, 0.45);
+            border-radius: 16px 16px 0 0;
             display: flex; justify-content: center;
         }
         .desk-legs {
-            position: absolute; bottom: 0; width: 85%; height: 50px;
-            border-left: 6px solid #27123d; border-right: 6px solid #27123d;
+            position: absolute; bottom: 0; width: 88%; height: 75px;
+            border-left: 8px solid #221035; border-right: 8px solid #221035;
         }
 
-        /* 3 talik monitor setupi */
+        /* Stol ustidagi jihozlar: Katta mousepad, klaviatura va sichqoncha */
+        .desk-mat {
+            position: absolute; top: 12px; width: 62%; height: 42px;
+            background: #09090b; border: 1.5px solid rgba(76, 201, 240, 0.4);
+            border-radius: 6px; box-shadow: 0 0 10px rgba(76, 201, 240, 0.25);
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+        }
+        .desk-keyboard {
+            width: 70px; height: 22px; background: #18181b; border: 1px solid #3f3f46;
+            border-radius: 3px; box-shadow: 0 0 6px var(--neon-pink);
+            background-image: repeating-linear-gradient(90deg, transparent, transparent 3px, rgba(255,255,255,0.15) 3px, rgba(255,255,255,0.15) 5px);
+        }
+        .desk-mouse {
+            width: 10px; height: 16px; background: #27272a; border-radius: 5px;
+            border: 1px solid var(--neon-blue); box-shadow: 0 0 5px var(--neon-blue);
+        }
+
+        /* 3D MONITORLAR SETUP'I */
         .triple-monitors {
-            position: absolute; bottom: 95px; width: 100%;
-            display: flex; justify-content: center; align-items: flex-end; gap: 6px;
+            position: absolute; bottom: 135px; width: 100%;
+            display: flex; justify-content: center; align-items: flex-end; gap: 4px;
             z-index: 5;
         }
-        .vert-monitor {
-            width: 32px; height: 82px; background: #000;
-            border: 2px solid #334155; border-radius: 4px;
-            padding: 3px 2px; overflow: hidden;
-            box-shadow: 0 0 12px rgba(0, 255, 136, 0.35);
+        /* Chap monitor (ichkariga burilgan 3D) */
+        .vert-monitor.left {
+            width: 44px; height: 110px; background: #000;
+            border: 2px solid #334155; border-radius: 5px;
+            padding: 4px 2px; overflow: hidden;
+            box-shadow: 0 0 14px rgba(0, 255, 136, 0.35);
+            transform: perspective(300px) rotateY(18deg);
+        }
+        /* O'ng monitor (ichkariga burilgan 3D) */
+        .vert-monitor.right {
+            width: 44px; height: 110px; background: #000;
+            border: 2px solid #334155; border-radius: 5px;
+            padding: 4px 2px; overflow: hidden;
+            box-shadow: 0 0 14px rgba(0, 255, 136, 0.35);
+            transform: perspective(300px) rotateY(-18deg);
         }
         .matrix-code {
-            font-size: 5px; line-height: 1.25; color: var(--neon-green); font-family: monospace;
+            font-size: 5.5px; line-height: 1.3; color: var(--neon-green); font-family: monospace;
             animation: scrollMatrix 3s linear infinite;
         }
-        @keyframes scrollMatrix { 0% { transform: translateY(0); } 100% { transform: translateY(-10px); } }
+        @keyframes scrollMatrix { 0% { transform: translateY(0); } 100% { transform: translateY(-12px); } }
 
+        /* Asosiy markaziy monitor */
         .center-monitor {
-            width: 98px; height: 70px; background: #020617;
-            border: 2px solid #475569; border-radius: 6px;
-            box-shadow: 0 0 20px rgba(76, 201, 240, 0.45);
+            width: 135px; height: 95px; background: #020617;
+            border: 2.5px solid #475569; border-radius: 8px;
+            box-shadow: 0 0 25px rgba(76, 201, 240, 0.5);
             display: flex; flex-direction: column; align-items: center; justify-content: center;
             position: relative;
         }
         .monitor-stand {
-            position: absolute; bottom: -8px; width: 18px; height: 8px; background: #334155;
+            position: absolute; bottom: -10px; width: 26px; height: 10px; background: #334155;
+            border-radius: 2px 2px 0 0;
         }
         .flip-clock {
-            font-size: 17px; font-weight: 800; font-family: monospace;
-            background: #0f172a; padding: 2px 7px; border-radius: 4px; color: #fff;
-            box-shadow: inset 0 0 5px #000; margin-bottom: 2px;
+            font-size: 22px; font-weight: 900; font-family: monospace;
+            background: #090d16; padding: 4px 10px; border-radius: 6px; color: #fff;
+            box-shadow: inset 0 0 8px #000, 0 0 10px rgba(255,255,255,0.2); margin-bottom: 4px;
+            letter-spacing: 1px;
         }
         .mining-live-badge {
-            font-size: 7px; color: var(--neon-green); font-family: monospace;
+            font-size: 8px; color: var(--neon-green); font-family: monospace; font-weight: 700;
             animation: blink 1s infinite alternate;
         }
         @keyframes blink { 0% { opacity: 0.3; } 100% { opacity: 1; } }
 
-        /* Stol ostidagi og'ma futuristik korpus (PC) */
+        /* Realistik Gamer Kreslosi (Suratdagi sifat va burchak) */
+        .gamer-chair {
+            position: absolute; bottom: 12px; left: 16px; width: 58px; height: 135px;
+            background: #090312; border: 2.5px solid #e2e8f0; border-radius: 16px 16px 6px 6px;
+            box-shadow: inset 0 0 15px rgba(255,255,255,0.2), 0 10px 25px rgba(0,0,0,0.9);
+            z-index: 7; display: flex; flex-direction: column; align-items: center;
+        }
+        .chair-headrest {
+            width: 32px; height: 20px; background: #201138; border: 2px solid #fff; border-radius: 5px; margin-top: 5px;
+            font-size: 7px; color: #fff; text-align: center; line-height: 17px; font-weight: 900; letter-spacing: 0.5px;
+        }
+        .chair-body {
+            width: 44px; height: 62px; background: #140a26; border-radius: 6px; margin-top: 6px;
+            border-left: 3.5px solid #ef4444; border-right: 3.5px solid #ef4444;
+            box-shadow: inset 0 0 8px rgba(0,0,0,0.8);
+        }
+        .chair-armrests {
+            position: absolute; top: 48px; width: 56px; height: 6px; background: #475569; border-radius: 3px;
+        }
+        .chair-base {
+            position: absolute; bottom: -8px; width: 44px; height: 8px; background: #334155; border-radius: 4px;
+        }
+
+        /* Stol ostidagi og'ma futuristik keys (Suratdagi korpus) */
         .futuristic-pc {
-            position: absolute; bottom: 8px; right: 26px; width: 50px; height: 78px;
+            position: absolute; bottom: 12px; right: 28px; width: 62px; height: 105px;
             background: linear-gradient(135deg, #1e293b 0%, #090d16 100%);
-            border: 2px solid var(--neon-blue); border-radius: 10px;
-            box-shadow: 0 0 18px rgba(76, 201, 240, 0.45);
-            transform: skewX(-5deg); z-index: 6; padding: 4px;
+            border: 2px solid var(--neon-blue); border-radius: 12px;
+            box-shadow: 0 0 22px rgba(76, 201, 240, 0.5);
+            transform: skewX(-6deg); z-index: 7; padding: 6px;
             display: flex; flex-direction: column; justify-content: space-between;
         }
         .case-cooler {
-            width: 30px; height: 30px; border-radius: 50%; border: 2px dashed var(--neon-pink);
+            width: 38px; height: 38px; border-radius: 50%; border: 2.5px dashed var(--neon-pink);
             margin: 2px auto; animation: spin 0.8s linear infinite;
         }
         @keyframes spin { 100% { transform: rotate(360deg); } }
-        .gpu-rack { display: flex; flex-direction: column; gap: 3px; }
+        .gpu-rack { display: flex; flex-direction: column; gap: 4px; }
         .gpu-slot {
-            width: 100%; height: 7px; background: #1e1133; border-left: 3px solid var(--neon-green);
-            box-shadow: 0 0 6px var(--neon-green); border-radius: 2px;
+            width: 100%; height: 9px; background: #1e1133; border-left: 3.5px solid var(--neon-green);
+            box-shadow: 0 0 8px var(--neon-green); border-radius: 2px;
         }
 
         /* ========================================================
@@ -262,13 +306,13 @@
 </head>
 <body>
 
-    <!-- Doimiy Balans -->
+    <!-- Balans -->
     <div class="balance-chip">
         <div class="stat-label">Balansdagi Stars</div>
         <h2>⭐ <span id="stars-balance">0.0000</span></h2>
     </div>
 
-    <!-- 1-BO'LIM: SURATDAGI YANGILANGAN GAMER ROOM -->
+    <!-- 1-BO'LIM: KATTALASHTIRILGAN VA 3D REALISTIK SETUP -->
     <div id="tab-farm" class="tab-content active">
         <div class="top-stats">
             <div class="stat-badge">
@@ -282,38 +326,47 @@
         </div>
 
         <div class="room-scene">
-            <div class="wall-neon-sign">MINING</div>
-            <div class="wall-poster" style="top:14px; right:80px;">🎮</div>
-            <div class="wall-poster" style="top:24px; right:26px;">⚡️</div>
+            <!-- Pol qatlami -->
+            <div class="floor-wood"></div>
 
-            <!-- Suratdagi 3 talik monitor -->
+            <!-- Devor chiroqlari va dekoratsiya -->
+            <div class="wall-neon-sign">MINING</div>
+            <div class="wall-poster" style="top:20px; right:95px;">🎮</div>
+            <div class="wall-poster" style="top:32px; right:35px;">⚡️</div>
+
+            <!-- 3D 3 talik monitorlar -->
             <div class="triple-monitors">
-                <div class="vert-monitor">
-                    <div class="matrix-code">0101<br>HASH<br>POOL<br>OK<br>1010<br>SYS<br>99%</div>
+                <div class="vert-monitor left">
+                    <div class="matrix-code">0101<br>HASH<br>POOL<br>OK<br>1010<br>SYS<br>99%<br>DIFF<br>ETH</div>
                 </div>
                 <div class="center-monitor">
                     <div class="flip-clock" id="live-clock">08:31</div>
                     <div class="mining-live-badge">> MINING LIVE</div>
                     <div class="monitor-stand"></div>
                 </div>
-                <div class="vert-monitor">
-                    <div class="matrix-code">RTX<br>ON<br>DIFF<br>FAST<br>GPU1<br>100%<br>TEMP</div>
+                <div class="vert-monitor right">
+                    <div class="matrix-code">RTX<br>ON<br>DIFF<br>FAST<br>GPU1<br>100%<br>TEMP<br>52C<br>LOAD</div>
                 </div>
             </div>
 
-            <!-- Suratdagi Gamer Kreslosi -->
+            <!-- Gamer Kreslosi -->
             <div class="gamer-chair">
                 <div class="chair-headrest">PRO</div>
+                <div class="chair-armrests"></div>
                 <div class="chair-body"></div>
                 <div class="chair-base"></div>
             </div>
 
-            <!-- Suratdagi Qizil chiziqli Stol -->
+            <!-- Katta Gamer Stoli -->
             <div class="gamer-desk">
+                <div class="desk-mat">
+                    <div class="desk-keyboard"></div>
+                    <div class="desk-mouse"></div>
+                </div>
                 <div class="desk-legs"></div>
             </div>
 
-            <!-- Suratdagi Og'ma Futuristik Keys -->
+            <!-- Stol ostidagi og'ma keys -->
             <div class="futuristic-pc">
                 <div class="case-cooler"></div>
                 <div class="gpu-rack" id="gpu-visual-rack"></div>
@@ -485,7 +538,6 @@
             localStorage.setItem('bonus_received', 'true');
         }
 
-        // Jonli raqamli soat
         function updateClock() {
             const now = new Date();
             const h = String(now.getHours()).padStart(2, '0');
