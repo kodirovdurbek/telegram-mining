@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Realistic Gamer Mining Setup</title>
+    <title>Gamer Mining Room</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         :root {
@@ -30,6 +30,17 @@
             min-height: 100vh;
         }
 
+        /* Yuqori Panel: Balans & Til Tanlash */
+        .top-header-bar {
+            width: 100%; max-width: 440px; display: flex; justify-content: flex-end; margin-bottom: 8px;
+        }
+        .lang-switch-btn {
+            background: rgba(26, 16, 49, 0.8); border: 1px solid rgba(167, 139, 250, 0.4);
+            color: var(--text-main); padding: 5px 12px; border-radius: 20px; font-size: 12px;
+            font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 5px;
+            box-shadow: 0 0 10px rgba(157, 78, 221, 0.25);
+        }
+
         .balance-chip {
             width: 100%; max-width: 440px; text-align: center;
             background: linear-gradient(180deg, rgba(247, 37, 133, 0.15) 0%, rgba(15, 7, 30, 0.85) 100%);
@@ -51,9 +62,7 @@
         }
         .stat-val { font-size: 15px; font-weight: 700; color: var(--neon-blue); margin-top: 2px; }
 
-        /* ========================================================
-           KATTALASHTIRILGAN REALISTIK 3D GAMER ROOM
-           ======================================================== */
+        /* REALISTIK 3D GAMER SETUP */
         .room-scene {
             width: 100%; height: 360px; position: relative;
             background: radial-gradient(circle at 75% 25%, #3c126d 0%, #17072d 55%, #0d041c 100%);
@@ -63,7 +72,6 @@
             perspective: 800px;
         }
 
-        /* Yog'och pol (Suratdagi laminat) */
         .floor-wood {
             position: absolute; bottom: 0; left: 0; right: 0; height: 110px;
             background: linear-gradient(180deg, #12071a 0%, #08030d 100%);
@@ -71,7 +79,6 @@
             border-top: 1px solid rgba(247, 37, 133, 0.2);
         }
 
-        /* Devordagi neon & san'at plakatlari */
         .wall-neon-sign {
             position: absolute; top: 22px; left: 18px;
             color: #ff007f; font-weight: 900; font-size: 16px; text-shadow: 0 0 15px #ff007f, 0 0 30px #ff007f;
@@ -84,21 +91,17 @@
             box-shadow: 0 4px 15px rgba(247,37,133,0.35); display: flex; align-items: center; justify-content: center; font-size: 14px;
         }
 
-        /* Gamer Stoli (Kattaroq, massiv va qizil neon qirrali) */
         .gamer-desk {
             position: absolute; bottom: 0; width: 92%; height: 135px;
             background: linear-gradient(180deg, #1a1523 0%, #0d0a14 100%);
-            border-top: 5px solid #ef4444;
-            box-shadow: 0 -6px 25px rgba(239, 68, 68, 0.45);
-            border-radius: 16px 16px 0 0;
-            display: flex; justify-content: center;
+            border-top: 5px solid #ef4444; box-shadow: 0 -6px 25px rgba(239, 68, 68, 0.45);
+            border-radius: 16px 16px 0 0; display: flex; justify-content: center;
         }
         .desk-legs {
             position: absolute; bottom: 0; width: 88%; height: 75px;
             border-left: 8px solid #221035; border-right: 8px solid #221035;
         }
 
-        /* Stol ustidagi jihozlar: Katta mousepad, klaviatura va sichqoncha */
         .desk-mat {
             position: absolute; top: 12px; width: 62%; height: 42px;
             background: #09090b; border: 1.5px solid rgba(76, 201, 240, 0.4);
@@ -115,26 +118,18 @@
             border: 1px solid var(--neon-blue); box-shadow: 0 0 5px var(--neon-blue);
         }
 
-        /* 3D MONITORLAR SETUP'I */
         .triple-monitors {
             position: absolute; bottom: 135px; width: 100%;
-            display: flex; justify-content: center; align-items: flex-end; gap: 4px;
-            z-index: 5;
+            display: flex; justify-content: center; align-items: flex-end; gap: 4px; z-index: 5;
         }
-        /* Chap monitor (ichkariga burilgan 3D) */
         .vert-monitor.left {
-            width: 44px; height: 110px; background: #000;
-            border: 2px solid #334155; border-radius: 5px;
-            padding: 4px 2px; overflow: hidden;
-            box-shadow: 0 0 14px rgba(0, 255, 136, 0.35);
+            width: 44px; height: 110px; background: #000; border: 2px solid #334155; border-radius: 5px;
+            padding: 4px 2px; overflow: hidden; box-shadow: 0 0 14px rgba(0, 255, 136, 0.35);
             transform: perspective(300px) rotateY(18deg);
         }
-        /* O'ng monitor (ichkariga burilgan 3D) */
         .vert-monitor.right {
-            width: 44px; height: 110px; background: #000;
-            border: 2px solid #334155; border-radius: 5px;
-            padding: 4px 2px; overflow: hidden;
-            box-shadow: 0 0 14px rgba(0, 255, 136, 0.35);
+            width: 44px; height: 110px; background: #000; border: 2px solid #334155; border-radius: 5px;
+            padding: 4px 2px; overflow: hidden; box-shadow: 0 0 14px rgba(0, 255, 136, 0.35);
             transform: perspective(300px) rotateY(-18deg);
         }
         .matrix-code {
@@ -143,23 +138,18 @@
         }
         @keyframes scrollMatrix { 0% { transform: translateY(0); } 100% { transform: translateY(-12px); } }
 
-        /* Asosiy markaziy monitor */
         .center-monitor {
-            width: 135px; height: 95px; background: #020617;
-            border: 2.5px solid #475569; border-radius: 8px;
-            box-shadow: 0 0 25px rgba(76, 201, 240, 0.5);
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            position: relative;
+            width: 135px; height: 95px; background: #020617; border: 2.5px solid #475569; border-radius: 8px;
+            box-shadow: 0 0 25px rgba(76, 201, 240, 0.5); display: flex; flex-direction: column;
+            align-items: center; justify-content: center; position: relative;
         }
         .monitor-stand {
             position: absolute; bottom: -10px; width: 26px; height: 10px; background: #334155;
-            border-radius: 2px 2px 0 0;
         }
         .flip-clock {
-            font-size: 22px; font-weight: 900; font-family: monospace;
-            background: #090d16; padding: 4px 10px; border-radius: 6px; color: #fff;
-            box-shadow: inset 0 0 8px #000, 0 0 10px rgba(255,255,255,0.2); margin-bottom: 4px;
-            letter-spacing: 1px;
+            font-size: 22px; font-weight: 900; font-family: monospace; background: #090d16;
+            padding: 4px 10px; border-radius: 6px; color: #fff; box-shadow: inset 0 0 8px #000, 0 0 10px rgba(255,255,255,0.2);
+            margin-bottom: 4px;
         }
         .mining-live-badge {
             font-size: 8px; color: var(--neon-green); font-family: monospace; font-weight: 700;
@@ -167,7 +157,6 @@
         }
         @keyframes blink { 0% { opacity: 0.3; } 100% { opacity: 1; } }
 
-        /* Realistik Gamer Kreslosi (Suratdagi sifat va burchak) */
         .gamer-chair {
             position: absolute; bottom: 12px; left: 16px; width: 58px; height: 135px;
             background: #090312; border: 2.5px solid #e2e8f0; border-radius: 16px 16px 6px 6px;
@@ -176,12 +165,11 @@
         }
         .chair-headrest {
             width: 32px; height: 20px; background: #201138; border: 2px solid #fff; border-radius: 5px; margin-top: 5px;
-            font-size: 7px; color: #fff; text-align: center; line-height: 17px; font-weight: 900; letter-spacing: 0.5px;
+            font-size: 7px; color: #fff; text-align: center; line-height: 17px; font-weight: 900;
         }
         .chair-body {
             width: 44px; height: 62px; background: #140a26; border-radius: 6px; margin-top: 6px;
             border-left: 3.5px solid #ef4444; border-right: 3.5px solid #ef4444;
-            box-shadow: inset 0 0 8px rgba(0,0,0,0.8);
         }
         .chair-armrests {
             position: absolute; top: 48px; width: 56px; height: 6px; background: #475569; border-radius: 3px;
@@ -190,13 +178,11 @@
             position: absolute; bottom: -8px; width: 44px; height: 8px; background: #334155; border-radius: 4px;
         }
 
-        /* Stol ostidagi og'ma futuristik keys (Suratdagi korpus) */
         .futuristic-pc {
             position: absolute; bottom: 12px; right: 28px; width: 62px; height: 105px;
             background: linear-gradient(135deg, #1e293b 0%, #090d16 100%);
             border: 2px solid var(--neon-blue); border-radius: 12px;
-            box-shadow: 0 0 22px rgba(76, 201, 240, 0.5);
-            transform: skewX(-6deg); z-index: 7; padding: 6px;
+            box-shadow: 0 0 22px rgba(76, 201, 240, 0.5); transform: skewX(-6deg); z-index: 7; padding: 6px;
             display: flex; flex-direction: column; justify-content: space-between;
         }
         .case-cooler {
@@ -210,16 +196,13 @@
             box-shadow: 0 0 8px var(--neon-green); border-radius: 2px;
         }
 
-        /* ========================================================
-           DO'KON VA HAMYON (O'ZGARMAGAN, O'Z JOYIDA)
-           ======================================================== */
+        /* DO'KON */
         .section-header { font-size: 13px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 12px; }
 
         .realistic-gpu-card {
             background: linear-gradient(145deg, #161f33 0%, #0e1424 100%);
-            border: 1px solid #23304b; border-radius: 16px;
-            padding: 12px; margin-bottom: 14px; box-shadow: 0 8px 20px rgba(0,0,0,0.4);
-            display: flex; flex-direction: column; gap: 10px;
+            border: 1px solid #23304b; border-radius: 16px; padding: 12px; margin-bottom: 14px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.4); display: flex; flex-direction: column; gap: 10px;
         }
         .gpu-model-visual {
             width: 100%; height: 82px; background: linear-gradient(90deg, #1b2438 0%, #283552 40%, #1e283d 100%);
@@ -280,6 +263,7 @@
             box-shadow: 0 0 12px rgba(239, 68, 68, 0.45);
         }
 
+        /* HAMYON */
         .wallet-card {
             background: var(--panel-bg); border: 1px solid #1e293b; border-radius: 14px;
             padding: 18px; text-align: center; margin-top: 10px;
@@ -306,35 +290,38 @@
 </head>
 <body>
 
+    <!-- Til Almashtirish Tugmasi -->
+    <div class="top-header-bar">
+        <button class="lang-switch-btn" onclick="toggleLanguage()">
+            <span id="lang-flag">🇷🇺</span> <span id="lang-name">RU</span>
+        </button>
+    </div>
+
     <!-- Balans -->
     <div class="balance-chip">
-        <div class="stat-label">Balansdagi Stars</div>
+        <div class="stat-label" id="txt-bal-label">Balansdagi Stars</div>
         <h2>⭐ <span id="stars-balance">0.0000</span></h2>
     </div>
 
-    <!-- 1-BO'LIM: KATTALASHTIRILGAN VA 3D REALISTIK SETUP -->
+    <!-- 1-BO'LIM: FERMA -->
     <div id="tab-farm" class="tab-content active">
         <div class="top-stats">
             <div class="stat-badge">
-                <div class="stat-label">Ferma Quvvati</div>
+                <div class="stat-label" id="txt-power-label">Ferma Quvvati</div>
                 <div class="stat-val"><span id="hashrate">0</span> MH/s</div>
             </div>
             <div class="stat-badge">
-                <div class="stat-label">Tezlik</div>
+                <div class="stat-label" id="txt-speed-label">Tezlik</div>
                 <div class="stat-val" style="color: var(--neon-green);">+<span id="speed">0.000</span> ⭐/m</div>
             </div>
         </div>
 
         <div class="room-scene">
-            <!-- Pol qatlami -->
             <div class="floor-wood"></div>
-
-            <!-- Devor chiroqlari va dekoratsiya -->
             <div class="wall-neon-sign">MINING</div>
             <div class="wall-poster" style="top:20px; right:95px;">🎮</div>
             <div class="wall-poster" style="top:32px; right:35px;">⚡️</div>
 
-            <!-- 3D 3 talik monitorlar -->
             <div class="triple-monitors">
                 <div class="vert-monitor left">
                     <div class="matrix-code">0101<br>HASH<br>POOL<br>OK<br>1010<br>SYS<br>99%<br>DIFF<br>ETH</div>
@@ -349,7 +336,6 @@
                 </div>
             </div>
 
-            <!-- Gamer Kreslosi -->
             <div class="gamer-chair">
                 <div class="chair-headrest">PRO</div>
                 <div class="chair-armrests"></div>
@@ -357,7 +343,6 @@
                 <div class="chair-base"></div>
             </div>
 
-            <!-- Katta Gamer Stoli -->
             <div class="gamer-desk">
                 <div class="desk-mat">
                     <div class="desk-keyboard"></div>
@@ -366,7 +351,6 @@
                 <div class="desk-legs"></div>
             </div>
 
-            <!-- Stol ostidagi og'ma keys -->
             <div class="futuristic-pc">
                 <div class="case-cooler"></div>
                 <div class="gpu-rack" id="gpu-visual-rack"></div>
@@ -374,9 +358,9 @@
         </div>
     </div>
 
-    <!-- 2-BO'LIM: VIDEOKARTALAR DO'KONI (O'ZGARMAGAN) -->
+    <!-- 2-BO'LIM: DO'KON -->
     <div id="tab-shop" class="tab-content">
-        <div class="section-header">🛒 Videokartalar Bo'limi</div>
+        <div class="section-header" id="txt-shop-title">🛒 Videokartalar Bo'limi</div>
 
         <!-- 1. GTX 1660 Super -->
         <div class="realistic-gpu-card">
@@ -491,17 +475,17 @@
         </div>
     </div>
 
-    <!-- 3-BO'LIM: PUL YECHISH / HAMYON (O'ZGARMAGAN) -->
+    <!-- 3-BO'LIM: HAMYON -->
     <div id="tab-wallet" class="tab-content">
-        <div class="section-header">💳 Mablag'ni Yechib Olish</div>
+        <div class="section-header" id="txt-wallet-title">💳 Mablag'ni Yechib Olish</div>
         <div class="wallet-card">
             <div style="font-size: 32px; margin-bottom: 8px;">💼</div>
-            <h3>Yechib olish shartlari</h3>
-            <p style="font-size: 12px; color: var(--text-muted); margin: 6px 0 14px 0;">
+            <h3 id="txt-rules-title">Yechib olish shartlari</h3>
+            <p id="txt-rules-desc" style="font-size: 12px; color: var(--text-muted); margin: 6px 0 14px 0;">
                 Minimal yechish summasi: <b style="color: var(--gold);">50 ⭐</b>.<br>
                 So'rov yuborilgach, hisobingiz admin tomonidan tekshirilib tasdiqlanadi.
             </p>
-            <button class="btn-withdraw" onclick="withdrawStars()">Barcha Stars'ni Yechish</button>
+            <button class="btn-withdraw" id="btn-withdraw-txt" onclick="withdrawStars()">Barcha Stars'ni Yechish</button>
         </div>
     </div>
 
@@ -509,15 +493,15 @@
     <div class="bottom-nav">
         <button class="nav-item active" onclick="switchTab('farm', this)">
             <svg viewBox="0 0 24 24"><path d="M4 6h16v10H4V6zm-2 12h20v2H2v-2z"/></svg>
-            <span>Ferma</span>
+            <span id="nav-farm">Ferma</span>
         </button>
         <button class="nav-item" onclick="switchTab('shop', this)">
             <svg viewBox="0 0 24 24"><path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.08-.14.12-.31.12-.48 0-.55-.45-1-1-1H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/></svg>
-            <span>Do'kon</span>
+            <span id="nav-shop">Do'kon</span>
         </button>
         <button class="nav-item" onclick="switchTab('wallet', this)">
             <svg viewBox="0 0 24 24"><path d="M21 18v1c0 1.1-.9 2-2 2H5c-1.11 0-2-.9-2-2V5c0-1.1.89-2 2-2h14c1.1 0 2 .9 2 2v1h-9c-1.11 0-2 .9-2 2v8c0 1.1.89 2 2 2h9zm-9-2h10V8H12v8zm4-2.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg>
-            <span>Hamyon</span>
+            <span id="nav-wallet">Hamyon</span>
         </button>
     </div>
 
@@ -525,6 +509,77 @@
         const tg = window.Telegram?.WebApp;
         if (tg) { tg.ready(); tg.expand(); }
 
+        // ================= TIL SOZLAMALARI =================
+        const translations = {
+            uz: {
+                flag: "🇷🇺",
+                btnName: "RU",
+                balLabel: "Balansdagi Stars",
+                powerLabel: "Ferma Quvvati",
+                speedLabel: "Tezlik",
+                shopTitle: "🛒 Videokartalar Bo'limi",
+                walletTitle: "💳 Mablag'ni Yechib Olish",
+                rulesTitle: "Yechib olish shartlari",
+                rulesDesc: "Minimal yechish summasi: <b style='color: var(--gold);'>50 ⭐</b>.<br>So'rov yuborilgach, hisobingiz admin tomonidan tekshirilib tasdiqlanadi.",
+                btnWithdraw: "Barcha Stars'ni Yechish",
+                navFarm: "Ferma",
+                navShop: "Do'kon",
+                navWallet: "Hamyon",
+                boughtMsg: "xarid qilindi!",
+                minWithdrawMsg: "Minimal yechish: 50 ⭐"
+            },
+            ru: {
+                flag: "🇺🇿",
+                btnName: "UZ",
+                balLabel: "Баланс Stars",
+                powerLabel: "Мощность фермы",
+                speedLabel: "Скорость",
+                shopTitle: "🛒 Магазин видеокарт",
+                walletTitle: "💳 Вывод средств",
+                rulesTitle: "Условия вывода",
+                rulesDesc: "Минимальная сумма вывода: <b style='color: var(--gold);'>50 ⭐</b>.<br>После отправки заявка проверяется администратором.",
+                btnWithdraw: "Вывести все Stars",
+                navFarm: "Ферма",
+                navShop: "Магазин",
+                navWallet: "Кошелек",
+                boughtMsg: "успешно куплена!",
+                minWithdrawMsg: "Минимальный вывод: 50 ⭐"
+            }
+        };
+
+        // Agar foydalanuvchining Telegrami rus tilida bo'lsa avtomatik 'ru' tanlanadi
+        let userLang = localStorage.getItem('app_lang');
+        if (!userLang) {
+            const tgLang = tg?.initDataUnsafe?.user?.language_code;
+            userLang = (tgLang && tgLang.startsWith('ru')) ? 'ru' : 'uz';
+        }
+
+        function applyLanguage() {
+            const t = translations[userLang];
+            document.getElementById('lang-flag').innerText = t.flag;
+            document.getElementById('lang-name').innerText = t.btnName;
+            document.getElementById('txt-bal-label').innerText = t.balLabel;
+            document.getElementById('txt-power-label').innerText = t.powerLabel;
+            document.getElementById('txt-speed-label').innerText = t.speedLabel;
+            document.getElementById('txt-shop-title').innerText = t.shopTitle;
+            document.getElementById('txt-wallet-title').innerText = t.walletTitle;
+            document.getElementById('txt-rules-title').innerText = t.rulesTitle;
+            document.getElementById('txt-rules-desc').innerHTML = t.rulesDesc;
+            document.getElementById('btn-withdraw-txt').innerText = t.btnWithdraw;
+            document.getElementById('nav-farm').innerText = t.navFarm;
+            document.getElementById('nav-shop').innerText = t.navShop;
+            document.getElementById('nav-wallet').innerText = t.navWallet;
+            localStorage.setItem('app_lang', userLang);
+        }
+
+        function toggleLanguage() {
+            userLang = (userLang === 'uz') ? 'ru' : 'uz';
+            applyLanguage();
+        }
+
+        applyLanguage();
+
+        // ================= ASOSIY O'YIN KODI =================
         let balance = parseFloat(localStorage.getItem('stars_bal')) || 0;
         let hashrate = parseInt(localStorage.getItem('user_hashrate')) || 0;
         let speed = parseFloat(localStorage.getItem('user_speed')) || 0;
@@ -592,7 +647,7 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         title: name,
-                        description: `${addedHash} MH/s quvvatli videokarta`,
+                        description: `${addedHash} MH/s GPU`,
                         starsPrice: starsCost,
                         payload: `buy_${name.replace(/\\s+/g, '_')}`
                     })
@@ -606,20 +661,20 @@
                             speed += addedSpeed;
                             gpuCount += 1;
                             updateUI();
-                            alert(`${name} xarid qilindi!`);
+                            alert(`${name} ${translations[userLang].boughtMsg}`);
                         }
                     });
                 } else {
-                    alert("Xato: " + (data.error || "Invoice yaratilmadi"));
+                    alert("Xato / Ошибка: " + (data.error || "Invoice yaratilmadi"));
                 }
             } catch (e) {
-                alert("Xatolik: " + e.message);
+                alert("Xato / Ошибка: " + e.message);
             }
         }
 
         async function withdrawStars() {
             if (balance < 50) {
-                alert("Minimal yechish: 50 ⭐");
+                alert(translations[userLang].minWithdrawMsg);
                 return;
             }
             const user = tg.initDataUnsafe?.user || {};
