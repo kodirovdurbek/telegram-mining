@@ -3,200 +3,268 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Gamer Mining Room</title>
+    <title>3D Gamer Mining Room</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
+        /* 1. CYBER NEON TEMASI (DEFAULT) */
         :root {
-            --neon-purple: #9d4edd;
-            --neon-pink: #f72585;
-            --neon-blue: #4cc9f0;
-            --neon-green: #00ff88;
+            --theme-bg: radial-gradient(circle at 65% 25%, #3b105a 0%, #1c062c 45%, #090214 100%);
+            --theme-neon: #ff007f;
+            --theme-accent: #00f2fe;
+            --theme-code: #00ff88;
+            --theme-desk-edge: #ef4444;
+            --theme-desk-glow: rgba(239, 68, 68, 0.45);
             --gold: #ffb703;
-            --bg-deep: #0a0414;
-            --panel-bg: #111726;
-            --card-bg: rgba(22, 13, 40, 0.9);
+            --panel-bg: rgba(18, 10, 32, 0.85);
             --text-main: #f8fafc;
             --text-muted: #a78bfa;
         }
 
+        /* 2. MATRIX HACKER TEMASI */
+        body.theme-matrix {
+            --theme-bg: radial-gradient(circle at 50% 20%, #032b16 0%, #02170c 50%, #010a05 100%);
+            --theme-neon: #00ff88;
+            --theme-accent: #059669;
+            --theme-code: #10b981;
+            --theme-desk-edge: #00ff88;
+            --theme-desk-glow: rgba(0, 255, 136, 0.45);
+            --text-muted: #6ee7b7;
+        }
+
+        /* 3. LAVA FORGE TEMASI */
+        body.theme-lava {
+            --theme-bg: radial-gradient(circle at 65% 25%, #4a0e0e 0%, #240505 50%, #0d0101 100%);
+            --theme-neon: #ff3b00;
+            --theme-accent: #ff8800;
+            --theme-code: #ffaa00;
+            --theme-desk-edge: #ff2200;
+            --theme-desk-glow: rgba(255, 34, 0, 0.5);
+            --text-muted: #fca5a5;
+        }
+
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; user-select: none; }
+        
         body { 
-            background: radial-gradient(circle at 50% 10%, #2e1065 0%, #15062c 45%, var(--bg-deep) 100%);
+            background: #06020c; 
             color: var(--text-main); 
-            padding: 12px 12px 85px 12px; 
-            display: flex; 
-            flex-direction: column; 
-            align-items: center;
             min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow-x: hidden;
+            padding-bottom: 75px;
+            transition: background 0.4s ease;
         }
 
-        /* Yuqori Panel: Balans & Til Tanlash */
-        .top-header-bar {
-            width: 100%; max-width: 440px; display: flex; justify-content: flex-end; margin-bottom: 8px;
+        /* YUQORI HEADER VA TUGMALAR */
+        .top-bar {
+            width: 100%; max-width: 440px; padding: 10px 14px;
+            display: flex; justify-content: space-between; align-items: center;
+            z-index: 30;
         }
-        .lang-switch-btn {
-            background: rgba(26, 16, 49, 0.8); border: 1px solid rgba(167, 139, 250, 0.4);
-            color: var(--text-main); padding: 5px 12px; border-radius: 20px; font-size: 12px;
-            font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 5px;
-            box-shadow: 0 0 10px rgba(157, 78, 221, 0.25);
+        .header-actions { display: flex; gap: 8px; }
+        .action-chip-btn {
+            background: rgba(255,255,255,0.08); border: 1px solid rgba(167, 139, 250, 0.35);
+            color: #fff; padding: 5px 12px; border-radius: 20px; font-size: 11px;
+            font-weight: 700; cursor: pointer; backdrop-filter: blur(8px);
+            display: flex; align-items: center; gap: 4px;
         }
 
-        .balance-chip {
-            width: 100%; max-width: 440px; text-align: center;
-            background: linear-gradient(180deg, rgba(247, 37, 133, 0.15) 0%, rgba(15, 7, 30, 0.85) 100%);
-            border: 1px solid rgba(247, 37, 133, 0.4); border-radius: 16px; padding: 12px; margin-bottom: 12px;
-            box-shadow: 0 0 20px rgba(157, 78, 221, 0.25);
+        /* DIZAYN TANLASH POP-UP MODALI */
+        .theme-selector-bar {
+            width: calc(100% - 24px); max-width: 416px;
+            background: rgba(18, 10, 32, 0.9); border: 1px solid rgba(167, 139, 250, 0.3);
+            border-radius: 14px; padding: 8px; margin-bottom: 8px;
+            display: none; justify-content: space-around; gap: 6px;
+            z-index: 30; backdrop-filter: blur(10px);
         }
-        .balance-chip h2 { font-size: 26px; font-weight: 800; color: var(--gold); text-shadow: 0 0 14px rgba(255,183,3,0.5); }
-        .stat-label { font-size: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
+        .theme-selector-bar.show { display: flex; }
+        .theme-btn {
+            flex: 1; padding: 6px 4px; border-radius: 8px; border: 1px solid transparent;
+            font-size: 11px; font-weight: 800; cursor: pointer; color: #fff; background: rgba(255,255,255,0.05);
+            text-align: center;
+        }
+        .theme-btn.active { border-color: var(--theme-neon); background: rgba(255,255,255,0.15); }
+
+        /* HUD STATS (XONA USTIDAGI GLASS PANELS) */
+        .hud-stats {
+            width: calc(100% - 24px); max-width: 416px;
+            display: flex; justify-content: space-between; gap: 8px;
+            z-index: 20; margin-bottom: 6px;
+        }
+        .hud-card {
+            flex: 1; background: rgba(18, 10, 32, 0.75); backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 14px;
+            padding: 8px 10px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+        }
+        .hud-label { font-size: 9px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
+        .hud-val { font-size: 14px; font-weight: 800; color: var(--theme-accent); margin-top: 2px; }
+
+        /* BALANS */
+        .balance-pill {
+            width: calc(100% - 24px); max-width: 416px;
+            background: linear-gradient(180deg, rgba(255, 183, 3, 0.15) 0%, rgba(18, 10, 32, 0.85) 100%);
+            border: 1.5px solid rgba(255, 183, 3, 0.4); border-radius: 16px;
+            padding: 10px; text-align: center; box-shadow: 0 0 25px rgba(255, 183, 3, 0.2);
+            z-index: 20; margin-bottom: 8px;
+        }
+        .balance-pill h2 { font-size: 26px; font-weight: 900; color: var(--gold); text-shadow: 0 0 16px rgba(255,183,3,0.6); }
 
         .tab-content { display: none; width: 100%; max-width: 440px; }
         .tab-content.active { display: block; }
 
-        .top-stats {
-            width: 100%; display: flex; justify-content: space-between; gap: 10px; margin-bottom: 12px;
-        }
-        .stat-badge {
-            flex: 1; background: var(--card-bg); backdrop-filter: blur(8px);
-            border: 1px solid rgba(167, 139, 250, 0.2); border-radius: 12px; padding: 10px; text-align: center;
-        }
-        .stat-val { font-size: 15px; font-weight: 700; color: var(--neon-blue); margin-top: 2px; }
-
-        /* REALISTIK 3D GAMER SETUP */
-        .room-scene {
-            width: 100%; height: 360px; position: relative;
-            background: radial-gradient(circle at 75% 25%, #3c126d 0%, #17072d 55%, #0d041c 100%);
-            border-radius: 24px; border: 1.5px solid rgba(247, 37, 133, 0.4);
-            overflow: hidden; box-shadow: 0 14px 40px rgba(0,0,0,0.8), inset 0 0 60px rgba(157, 78, 221, 0.35);
-            display: flex; justify-content: center; align-items: flex-end; margin-bottom: 14px;
-            perspective: 800px;
+        /* ================= 3D GAMER XONASI SAHNASI ================= */
+        .scene-viewport {
+            width: 100%; height: calc(100vh - 230px); min-height: 420px;
+            position: relative; overflow: hidden;
+            background: var(--theme-bg);
+            display: flex; justify-content: center; align-items: flex-end;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            perspective: 900px;
+            transition: background 0.4s ease;
         }
 
-        .floor-wood {
-            position: absolute; bottom: 0; left: 0; right: 0; height: 110px;
-            background: linear-gradient(180deg, #12071a 0%, #08030d 100%);
-            background-image: repeating-linear-gradient(90deg, transparent 0, transparent 40px, rgba(255,255,255,0.02) 40px, rgba(255,255,255,0.02) 41px);
-            border-top: 1px solid rgba(247, 37, 133, 0.2);
+        .brick-accent {
+            position: absolute; left: 0; top: 0; bottom: 0; width: 35%;
+            background: linear-gradient(90deg, rgba(255,255,255,0.06) 0%, transparent 100%);
+            pointer-events: none;
         }
-
-        .wall-neon-sign {
+        .wall-neon {
             position: absolute; top: 22px; left: 18px;
-            color: #ff007f; font-weight: 900; font-size: 16px; text-shadow: 0 0 15px #ff007f, 0 0 30px #ff007f;
-            transform: rotate(-7deg); letter-spacing: 2px;
+            font-size: 20px; font-weight: 900; color: var(--theme-neon);
+            text-shadow: 0 0 10px var(--theme-neon), 0 0 30px var(--theme-neon);
+            transform: rotate(-10deg); letter-spacing: 2px;
         }
-        .wall-poster {
-            position: absolute; width: 44px; height: 58px;
-            background: linear-gradient(135deg, #1b0933, #0b0314);
-            border: 2px solid rgba(255,255,255,0.35); border-radius: 5px;
-            box-shadow: 0 4px 15px rgba(247,37,133,0.35); display: flex; align-items: center; justify-content: center; font-size: 14px;
-        }
-
-        .gamer-desk {
-            position: absolute; bottom: 0; width: 92%; height: 135px;
-            background: linear-gradient(180deg, #1a1523 0%, #0d0a14 100%);
-            border-top: 5px solid #ef4444; box-shadow: 0 -6px 25px rgba(239, 68, 68, 0.45);
-            border-radius: 16px 16px 0 0; display: flex; justify-content: center;
-        }
-        .desk-legs {
-            position: absolute; bottom: 0; width: 88%; height: 75px;
-            border-left: 8px solid #221035; border-right: 8px solid #221035;
+        .wall-frame {
+            position: absolute; top: 20px; right: 28px; width: 48px; height: 62px;
+            background: #140524; border: 2px solid rgba(255,255,255,0.3); border-radius: 6px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.8), 0 0 12px var(--theme-neon);
+            display: flex; align-items: center; justify-content: center; font-size: 18px;
         }
 
-        .desk-mat {
-            position: absolute; top: 12px; width: 62%; height: 42px;
-            background: #09090b; border: 1.5px solid rgba(76, 201, 240, 0.4);
-            border-radius: 6px; box-shadow: 0 0 10px rgba(76, 201, 240, 0.25);
-            display: flex; align-items: center; justify-content: center; gap: 8px;
-        }
-        .desk-keyboard {
-            width: 70px; height: 22px; background: #18181b; border: 1px solid #3f3f46;
-            border-radius: 3px; box-shadow: 0 0 6px var(--neon-pink);
-            background-image: repeating-linear-gradient(90deg, transparent, transparent 3px, rgba(255,255,255,0.15) 3px, rgba(255,255,255,0.15) 5px);
-        }
-        .desk-mouse {
-            width: 10px; height: 16px; background: #27272a; border-radius: 5px;
-            border: 1px solid var(--neon-blue); box-shadow: 0 0 5px var(--neon-blue);
+        .wood-floor {
+            position: absolute; bottom: 0; width: 100%; height: 160px;
+            background: linear-gradient(180deg, #180922 0%, #07020d 100%);
+            border-top: 2px solid rgba(255, 255, 255, 0.15);
+            background-image: repeating-linear-gradient(90deg, transparent 0, transparent 48px, rgba(255,255,255,0.02) 48px, rgba(255,255,255,0.02) 50px);
+            transform: rotateX(26deg); transform-origin: bottom;
         }
 
-        .triple-monitors {
-            position: absolute; bottom: 135px; width: 100%;
-            display: flex; justify-content: center; align-items: flex-end; gap: 4px; z-index: 5;
+        /* Qizil / Tematik Kantli Stol */
+        .pro-desk {
+            position: absolute; bottom: 20px; width: 90%; height: 155px;
+            background: linear-gradient(180deg, #161020 0%, #0b0712 100%);
+            border-top: 5px solid var(--theme-desk-edge); border-radius: 18px 18px 0 0;
+            box-shadow: 0 -8px 30px var(--theme-desk-glow);
+            display: flex; justify-content: center;
         }
-        .vert-monitor.left {
-            width: 44px; height: 110px; background: #000; border: 2px solid #334155; border-radius: 5px;
-            padding: 4px 2px; overflow: hidden; box-shadow: 0 0 14px rgba(0, 255, 136, 0.35);
-            transform: perspective(300px) rotateY(18deg);
+        .desk-edge-glow {
+            position: absolute; top: 0; left: 0; right: 0; height: 2px;
+            background: #fff; box-shadow: 0 0 12px var(--theme-desk-edge);
         }
-        .vert-monitor.right {
-            width: 44px; height: 110px; background: #000; border: 2px solid #334155; border-radius: 5px;
-            padding: 4px 2px; overflow: hidden; box-shadow: 0 0 14px rgba(0, 255, 136, 0.35);
-            transform: perspective(300px) rotateY(-18deg);
+
+        .mousepad {
+            position: absolute; top: 16px; width: 68%; height: 50px;
+            background: #09090b; border: 1.5px solid var(--theme-accent);
+            border-radius: 8px; box-shadow: 0 0 12px rgba(0, 242, 254, 0.25);
+            display: flex; align-items: center; justify-content: center; gap: 12px;
         }
+        .mech-keyboard {
+            width: 82px; height: 26px; background: #18181b; border: 1px solid #3f3f46;
+            border-radius: 4px; box-shadow: 0 0 8px var(--theme-neon);
+            background-image: repeating-linear-gradient(90deg, transparent, transparent 4px, rgba(255,255,255,0.12) 4px, rgba(255,255,255,0.12) 6px);
+        }
+        .gaming-mouse {
+            width: 12px; height: 18px; background: #27272a; border-radius: 6px;
+            border: 1px solid var(--theme-accent); box-shadow: 0 0 6px var(--theme-accent);
+        }
+
+        /* 3D MONITORLAR */
+        .monitors-array {
+            position: absolute; bottom: 175px; width: 100%;
+            display: flex; justify-content: center; align-items: flex-end; gap: 6px;
+            z-index: 10;
+        }
+        .side-monitor {
+            width: 48px; height: 125px; background: #000;
+            border: 2px solid #334155; border-radius: 6px;
+            padding: 4px 2px; overflow: hidden;
+            box-shadow: 0 0 18px rgba(0, 255, 136, 0.35);
+        }
+        .side-monitor.left { transform: perspective(400px) rotateY(22deg); }
+        .side-monitor.right { transform: perspective(400px) rotateY(-22deg); }
         .matrix-code {
-            font-size: 5.5px; line-height: 1.3; color: var(--neon-green); font-family: monospace;
-            animation: scrollMatrix 3s linear infinite;
+            font-size: 6px; line-height: 1.3; color: var(--theme-code); font-family: monospace;
+            animation: matrixRoll 3s linear infinite;
         }
-        @keyframes scrollMatrix { 0% { transform: translateY(0); } 100% { transform: translateY(-12px); } }
+        @keyframes matrixRoll { 0% { transform: translateY(0); } 100% { transform: translateY(-15px); } }
 
-        .center-monitor {
-            width: 135px; height: 95px; background: #020617; border: 2.5px solid #475569; border-radius: 8px;
-            box-shadow: 0 0 25px rgba(76, 201, 240, 0.5); display: flex; flex-direction: column;
-            align-items: center; justify-content: center; position: relative;
+        .main-monitor {
+            width: 155px; height: 105px; background: #020617;
+            border: 3px solid #475569; border-radius: 10px;
+            box-shadow: 0 0 30px rgba(0, 242, 254, 0.5), inset 0 0 20px rgba(0,0,0,0.8);
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            position: relative;
         }
-        .monitor-stand {
-            position: absolute; bottom: -10px; width: 26px; height: 10px; background: #334155;
+        .monitor-neck {
+            position: absolute; bottom: -12px; width: 30px; height: 12px; background: #334155;
+            border-radius: 2px;
         }
-        .flip-clock {
-            font-size: 22px; font-weight: 900; font-family: monospace; background: #090d16;
-            padding: 4px 10px; border-radius: 6px; color: #fff; box-shadow: inset 0 0 8px #000, 0 0 10px rgba(255,255,255,0.2);
-            margin-bottom: 4px;
+        .live-clock-card {
+            font-size: 26px; font-weight: 900; font-family: monospace;
+            background: #090d16; padding: 4px 12px; border-radius: 8px; color: #fff;
+            box-shadow: inset 0 0 10px #000, 0 0 12px rgba(255,255,255,0.25);
+            letter-spacing: 1px; margin-bottom: 4px;
         }
-        .mining-live-badge {
-            font-size: 8px; color: var(--neon-green); font-family: monospace; font-weight: 700;
-            animation: blink 1s infinite alternate;
+        .live-status {
+            font-size: 9px; color: var(--theme-code); font-family: monospace; font-weight: 700;
+            animation: pulseText 1s infinite alternate;
         }
-        @keyframes blink { 0% { opacity: 0.3; } 100% { opacity: 1; } }
+        @keyframes pulseText { 0% { opacity: 0.3; } 100% { opacity: 1; } }
 
-        .gamer-chair {
-            position: absolute; bottom: 12px; left: 16px; width: 58px; height: 135px;
-            background: #090312; border: 2.5px solid #e2e8f0; border-radius: 16px 16px 6px 6px;
-            box-shadow: inset 0 0 15px rgba(255,255,255,0.2), 0 10px 25px rgba(0,0,0,0.9);
-            z-index: 7; display: flex; flex-direction: column; align-items: center;
+        /* GEYMER KRESLOSI */
+        .racing-chair {
+            position: absolute; bottom: 30px; left: 18px; width: 68px; height: 150px;
+            background: #080311; border: 2.5px solid #cbd5e1; border-radius: 18px 18px 8px 8px;
+            box-shadow: inset 0 0 15px rgba(255,255,255,0.2), 0 12px 30px rgba(0,0,0,0.9);
+            z-index: 12; display: flex; flex-direction: column; align-items: center;
         }
-        .chair-headrest {
-            width: 32px; height: 20px; background: #201138; border: 2px solid #fff; border-radius: 5px; margin-top: 5px;
-            font-size: 7px; color: #fff; text-align: center; line-height: 17px; font-weight: 900;
+        .chair-pillow {
+            width: 38px; height: 22px; background: #23123d; border: 2px solid #fff; border-radius: 6px;
+            margin-top: 6px; font-size: 8px; color: #fff; text-align: center; line-height: 19px; font-weight: 900;
         }
-        .chair-body {
-            width: 44px; height: 62px; background: #140a26; border-radius: 6px; margin-top: 6px;
-            border-left: 3.5px solid #ef4444; border-right: 3.5px solid #ef4444;
+        .chair-spine {
+            width: 50px; height: 72px; background: #130924; border-radius: 8px; margin-top: 6px;
+            border-left: 4px solid var(--theme-desk-edge); border-right: 4px solid var(--theme-desk-edge);
+            box-shadow: inset 0 0 10px #000;
         }
-        .chair-armrests {
-            position: absolute; top: 48px; width: 56px; height: 6px; background: #475569; border-radius: 3px;
-        }
-        .chair-base {
-            position: absolute; bottom: -8px; width: 44px; height: 8px; background: #334155; border-radius: 4px;
+        .chair-stand {
+            position: absolute; bottom: -10px; width: 50px; height: 10px; background: #334155; border-radius: 5px;
         }
 
-        .futuristic-pc {
-            position: absolute; bottom: 12px; right: 28px; width: 62px; height: 105px;
+        /* KEYS (RIG) */
+        .futuristic-rig {
+            position: absolute; bottom: 30px; right: 24px; width: 72px; height: 120px;
             background: linear-gradient(135deg, #1e293b 0%, #090d16 100%);
-            border: 2px solid var(--neon-blue); border-radius: 12px;
-            box-shadow: 0 0 22px rgba(76, 201, 240, 0.5); transform: skewX(-6deg); z-index: 7; padding: 6px;
+            border: 2.5px solid var(--theme-accent); border-radius: 14px;
+            box-shadow: 0 0 25px rgba(0, 242, 254, 0.5);
+            transform: skewX(-7deg); z-index: 12; padding: 6px;
             display: flex; flex-direction: column; justify-content: space-between;
         }
-        .case-cooler {
-            width: 38px; height: 38px; border-radius: 50%; border: 2.5px dashed var(--neon-pink);
-            margin: 2px auto; animation: spin 0.8s linear infinite;
+        .rgb-fan {
+            width: 44px; height: 44px; border-radius: 50%; border: 3px dashed var(--theme-neon);
+            margin: 2px auto; animation: rotateFan 0.7s linear infinite;
         }
-        @keyframes spin { 100% { transform: rotate(360deg); } }
-        .gpu-rack { display: flex; flex-direction: column; gap: 4px; }
-        .gpu-slot {
-            width: 100%; height: 9px; background: #1e1133; border-left: 3.5px solid var(--neon-green);
-            box-shadow: 0 0 8px var(--neon-green); border-radius: 2px;
+        @keyframes rotateFan { 100% { transform: rotate(360deg); } }
+        .rig-gpus { display: flex; flex-direction: column; gap: 4px; }
+        .rig-slot {
+            width: 100%; height: 9px; background: #140722; border-left: 4px solid var(--theme-code);
+            box-shadow: 0 0 10px var(--theme-code); border-radius: 2px;
         }
 
-        /* DO'KON */
+        /* DO'KON VA HAMYON */
+        .section-padding { padding: 14px; }
         .section-header { font-size: 13px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 12px; }
 
         .realistic-gpu-card {
@@ -208,46 +276,24 @@
             width: 100%; height: 82px; background: linear-gradient(90deg, #1b2438 0%, #283552 40%, #1e283d 100%);
             border-radius: 10px; border: 2px solid #334466; position: relative;
             display: flex; align-items: center; justify-content: space-around; padding: 0 16px;
-            box-shadow: inset 0 0 12px rgba(0,0,0,0.8), 0 3px 10px rgba(0,0,0,0.5); overflow: hidden;
-        }
-        .gpu-model-visual::before {
-            content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
-            background: repeating-linear-gradient(90deg, transparent, transparent 5px, rgba(0,0,0,0.35) 5px, rgba(0,0,0,0.35) 7px);
-            pointer-events: none;
+            box-shadow: inset 0 0 12px rgba(0,0,0,0.8); overflow: hidden;
         }
         .gpu-pcie {
             position: absolute; bottom: 0; left: 20%; width: 60%; height: 5px;
             background: repeating-linear-gradient(90deg, #fbbf24 0, #fbbf24 3px, #000 3px, #000 5px);
         }
-        .gpu-bracket {
-            position: absolute; left: 0; top: 0; bottom: 0; width: 8px;
-            background: linear-gradient(180deg, #94a3b8 0%, #475569 100%); border-right: 1px solid #1e293b;
-        }
         .gpu-fan {
-            width: 54px; height: 54px; border-radius: 50%;
+            width: 52px; height: 52px; border-radius: 50%;
             background: radial-gradient(circle, #0b0f19 35%, #1f293d 70%); border: 2px solid #475569;
             position: relative; box-shadow: 0 0 10px rgba(0,0,0,0.8); z-index: 2;
         }
         .gpu-fan-blades {
             width: 100%; height: 100%; border-radius: 50%; position: absolute; top: 0; left: 0;
-            border: 3px dashed var(--accent-cyan); animation: spin 0.6s linear infinite;
+            border: 3px dashed var(--theme-accent); animation: rotateFan 0.6s linear infinite;
         }
         .fan-center {
             position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            width: 16px; height: 16px; background: radial-gradient(circle, #64748b 0%, #1e293b 100%);
-            border-radius: 50%; box-shadow: 0 0 4px rgba(0,0,0,0.9); z-index: 3;
-        }
-        .gpu-rgb-line {
-            position: absolute; top: 6px; left: 20px; right: 20px; height: 3px;
-            background: linear-gradient(90deg, var(--neon-green), var(--accent-cyan), var(--accent-purple));
-            box-shadow: 0 0 8px var(--accent-cyan); border-radius: 2px; z-index: 1;
-        }
-        .gpu-model-visual.vip {
-            border-color: #ef4444; background: linear-gradient(90deg, #2b1115 0%, #3d171e 50%, #220c10 100%);
-        }
-        .gpu-model-visual.vip .gpu-fan-blades { border-color: #ef4444; animation-duration: 0.35s; }
-        .gpu-model-visual.vip .gpu-rgb-line {
-            background: linear-gradient(90deg, #ff0055, #f59e0b, #ef4444); box-shadow: 0 0 12px #ef4444;
+            width: 14px; height: 14px; background: #64748b; border-radius: 50%;
         }
         .gpu-info-row { display: flex; justify-content: space-between; align-items: center; }
         .gpu-name-tag h4 { font-size: 14px; font-weight: 700; color: #fff; }
@@ -263,20 +309,19 @@
             box-shadow: 0 0 12px rgba(239, 68, 68, 0.45);
         }
 
-        /* HAMYON */
         .wallet-card {
-            background: var(--panel-bg); border: 1px solid #1e293b; border-radius: 14px;
-            padding: 18px; text-align: center; margin-top: 10px;
+            background: rgba(18, 10, 32, 0.85); border: 1px solid rgba(167, 139, 250, 0.3); border-radius: 16px;
+            padding: 20px; text-align: center; margin-top: 10px;
         }
         .btn-withdraw {
             width: 100%; background: #10b981; color: #fff; border: none;
-            padding: 12px; border-radius: 10px; font-weight: 700; font-size: 14px; cursor: pointer;
+            padding: 13px; border-radius: 10px; font-weight: 800; font-size: 14px; cursor: pointer;
         }
 
         /* PASTKI MENYU */
         .bottom-nav {
             position: fixed; bottom: 0; left: 0; right: 0;
-            background: rgba(15, 7, 30, 0.95); backdrop-filter: blur(14px);
+            background: rgba(10, 4, 18, 0.95); backdrop-filter: blur(14px);
             border-top: 1px solid rgba(167, 139, 250, 0.2); height: 60px;
             display: flex; justify-content: space-around; align-items: center; z-index: 100;
         }
@@ -284,212 +329,198 @@
             display: flex; flex-direction: column; align-items: center;
             color: var(--text-muted); font-size: 11px; cursor: pointer; border: none; background: none;
         }
-        .nav-item.active { color: var(--neon-pink); font-weight: 700; }
-        .nav-item svg { width: 20px; height: 20px; margin-bottom: 3px; fill: currentColor; }
+        .nav-item.active { color: var(--theme-neon); font-weight: 800; }
+        .nav-item svg { width: 22px; height: 22px; margin-bottom: 2px; fill: currentColor; }
     </style>
 </head>
 <body>
 
-    <!-- Til Almashtirish Tugmasi -->
-    <div class="top-header-bar">
-        <button class="lang-switch-btn" onclick="toggleLanguage()">
-            <span id="lang-flag">🇷🇺</span> <span id="lang-name">RU</span>
-        </button>
+    <!-- YUQORI HEADER -->
+    <div class="top-bar">
+        <div style="font-size: 12px; font-weight: 800; color: var(--theme-neon);">⚡️ MINING ROOM</div>
+        <div class="header-actions">
+            <!-- Dizayn Tanlash Tugmasi -->
+            <button class="action-chip-btn" onclick="toggleThemePanel()">
+                🎨 <span id="txt-theme-btn">Dizayn</span>
+            </button>
+            <!-- Til Tanlash Tugmasi -->
+            <button class="action-chip-btn" onclick="toggleLanguage()">
+                <span id="lang-flag">🇷🇺</span> <span id="lang-name">RU</span>
+            </button>
+        </div>
     </div>
 
-    <!-- Balans -->
-    <div class="balance-chip">
-        <div class="stat-label" id="txt-bal-label">Balansdagi Stars</div>
+    <!-- DIZAYN TANLASH PANELCHASI (3 XIL VARIANT) -->
+    <div class="theme-selector-bar" id="theme-selector">
+        <button class="theme-btn active" id="btn-theme-neon" onclick="selectTheme('neon')">🌸 Cyber Neon</button>
+        <button class="theme-btn" id="btn-theme-matrix" onclick="selectTheme('matrix')">💚 Matrix</button>
+        <button class="theme-btn" id="btn-theme-lava" onclick="selectTheme('lava')">🔥 Lava Forge</button>
+    </div>
+
+    <!-- HUD STATS -->
+    <div class="hud-stats">
+        <div class="hud-card">
+            <div class="hud-label" id="txt-power-label">Ferma Quvvati</div>
+            <div class="hud-val"><span id="hashrate">0</span> MH/s</div>
+        </div>
+        <div class="hud-card">
+            <div class="hud-label" id="txt-speed-label">Tezlik</div>
+            <div class="hud-val" style="color: var(--theme-code);">+<span id="speed">0.000</span> ⭐/m</div>
+        </div>
+    </div>
+
+    <!-- BALANS -->
+    <div class="balance-pill">
+        <div class="hud-label" id="txt-bal-label">Balansdagi Stars</div>
         <h2>⭐ <span id="stars-balance">0.0000</span></h2>
     </div>
 
-    <!-- 1-BO'LIM: FERMA -->
+    <!-- 1-BO'LIM: 3D GAMER FERMA -->
     <div id="tab-farm" class="tab-content active">
-        <div class="top-stats">
-            <div class="stat-badge">
-                <div class="stat-label" id="txt-power-label">Ferma Quvvati</div>
-                <div class="stat-val"><span id="hashrate">0</span> MH/s</div>
-            </div>
-            <div class="stat-badge">
-                <div class="stat-label" id="txt-speed-label">Tezlik</div>
-                <div class="stat-val" style="color: var(--neon-green);">+<span id="speed">0.000</span> ⭐/m</div>
-            </div>
-        </div>
+        <div class="scene-viewport">
+            <div class="brick-accent"></div>
+            <div class="wall-neon" id="scene-wall-neon">MINING</div>
+            <div class="wall-frame">🎮</div>
 
-        <div class="room-scene">
-            <div class="floor-wood"></div>
-            <div class="wall-neon-sign">MINING</div>
-            <div class="wall-poster" style="top:20px; right:95px;">🎮</div>
-            <div class="wall-poster" style="top:32px; right:35px;">⚡️</div>
+            <div class="wood-floor"></div>
 
-            <div class="triple-monitors">
-                <div class="vert-monitor left">
-                    <div class="matrix-code">0101<br>HASH<br>POOL<br>OK<br>1010<br>SYS<br>99%<br>DIFF<br>ETH</div>
+            <!-- 3D Uchlik Monitor -->
+            <div class="monitors-array">
+                <div class="side-monitor left">
+                    <div class="matrix-code">0101<br>HASH<br>POOL<br>OK<br>1010<br>SYS<br>99%<br>DIFF<br>ETH<br>BLOCK<br>OK</div>
                 </div>
-                <div class="center-monitor">
-                    <div class="flip-clock" id="live-clock">08:31</div>
-                    <div class="mining-live-badge">> MINING LIVE</div>
-                    <div class="monitor-stand"></div>
+                <div class="main-monitor">
+                    <div class="live-clock-card" id="live-clock">08:31</div>
+                    <div class="live-status">> MINING ACTIVE</div>
+                    <div class="monitor-neck"></div>
                 </div>
-                <div class="vert-monitor right">
-                    <div class="matrix-code">RTX<br>ON<br>DIFF<br>FAST<br>GPU1<br>100%<br>TEMP<br>52C<br>LOAD</div>
+                <div class="side-monitor right">
+                    <div class="matrix-code">RTX<br>ON<br>DIFF<br>FAST<br>GPU1<br>100%<br>TEMP<br>52C<br>LOAD<br>VRAM<br>MAX</div>
                 </div>
             </div>
 
-            <div class="gamer-chair">
-                <div class="chair-headrest">PRO</div>
-                <div class="chair-armrests"></div>
-                <div class="chair-body"></div>
-                <div class="chair-base"></div>
+            <!-- Geymer Kreslosi -->
+            <div class="racing-chair">
+                <div class="chair-pillow">PRO</div>
+                <div class="chair-spine"></div>
+                <div class="chair-stand"></div>
             </div>
 
-            <div class="gamer-desk">
-                <div class="desk-mat">
-                    <div class="desk-keyboard"></div>
-                    <div class="desk-mouse"></div>
+            <!-- Katta Stol -->
+            <div class="pro-desk">
+                <div class="desk-edge-glow"></div>
+                <div class="mousepad">
+                    <div class="mech-keyboard"></div>
+                    <div class="gaming-mouse"></div>
                 </div>
-                <div class="desk-legs"></div>
             </div>
 
-            <div class="futuristic-pc">
-                <div class="case-cooler"></div>
-                <div class="gpu-rack" id="gpu-visual-rack"></div>
+            <!-- Stol ostidagi Keys -->
+            <div class="futuristic-rig">
+                <div class="rgb-fan"></div>
+                <div class="rig-gpus" id="gpu-visual-rack"></div>
             </div>
         </div>
     </div>
 
     <!-- 2-BO'LIM: DO'KON -->
-    <div id="tab-shop" class="tab-content">
+    <div id="tab-shop" class="tab-content section-padding">
         <div class="section-header" id="txt-shop-title">🛒 Videokartalar Bo'limi</div>
 
-        <!-- 1. GTX 1660 Super -->
         <div class="realistic-gpu-card">
             <div class="gpu-model-visual">
-                <div class="gpu-bracket"></div>
-                <div class="gpu-rgb-line"></div>
                 <div class="gpu-fan"><div class="gpu-fan-blades"></div><div class="fan-center"></div></div>
                 <div class="gpu-fan"><div class="gpu-fan-blades"></div><div class="fan-center"></div></div>
                 <div class="gpu-pcie"></div>
             </div>
             <div class="gpu-info-row">
                 <div class="gpu-name-tag">
-                    <h4>GTX 1660 Super Twin Fan</h4>
+                    <h4>GTX 1660 Super</h4>
                     <p>+30 MH/s | +0.010 ⭐/min</p>
                 </div>
                 <button class="btn-buy" onclick="buyGPU('GTX 1660 Super', 10, 30, 0.010)">10 ⭐</button>
             </div>
         </div>
 
-        <!-- 2. RTX 3060 Ti -->
         <div class="realistic-gpu-card">
             <div class="gpu-model-visual">
-                <div class="gpu-bracket"></div>
-                <div class="gpu-rgb-line" style="box-shadow: 0 0 10px var(--neon-green);"></div>
-                <div class="gpu-fan"><div class="gpu-fan-blades" style="border-color: var(--neon-green);"></div><div class="fan-center"></div></div>
-                <div class="gpu-fan"><div class="gpu-fan-blades" style="border-color: var(--neon-green);"></div><div class="fan-center"></div></div>
+                <div class="gpu-fan"><div class="gpu-fan-blades" style="border-color: var(--theme-neon);"></div><div class="fan-center"></div></div>
+                <div class="gpu-fan"><div class="gpu-fan-blades" style="border-color: var(--theme-neon);"></div><div class="fan-center"></div></div>
                 <div class="gpu-pcie"></div>
             </div>
             <div class="gpu-info-row">
                 <div class="gpu-name-tag">
-                    <h4>RTX 3060 Ti Gaming OC</h4>
+                    <h4>RTX 3060 Ti OC</h4>
                     <p>+60 MH/s | +0.025 ⭐/min</p>
                 </div>
                 <button class="btn-buy" onclick="buyGPU('RTX 3060 Ti', 25, 60, 0.025)">25 ⭐</button>
             </div>
         </div>
 
-        <!-- 3. RTX 4070 Ti -->
         <div class="realistic-gpu-card">
             <div class="gpu-model-visual">
-                <div class="gpu-bracket"></div>
-                <div class="gpu-rgb-line" style="box-shadow: 0 0 12px var(--accent-purple);"></div>
-                <div class="gpu-fan" style="width:48px;height:48px;"><div class="gpu-fan-blades" style="border-color: var(--accent-purple);"></div><div class="fan-center"></div></div>
-                <div class="gpu-fan" style="width:48px;height:48px;"><div class="gpu-fan-blades" style="border-color: var(--accent-purple);"></div><div class="fan-center"></div></div>
-                <div class="gpu-fan" style="width:48px;height:48px;"><div class="gpu-fan-blades" style="border-color: var(--accent-purple);"></div><div class="fan-center"></div></div>
+                <div class="gpu-fan" style="width:46px;height:46px;"><div class="gpu-fan-blades"></div><div class="fan-center"></div></div>
+                <div class="gpu-fan" style="width:46px;height:46px;"><div class="gpu-fan-blades"></div><div class="fan-center"></div></div>
+                <div class="gpu-fan" style="width:46px;height:46px;"><div class="gpu-fan-blades"></div><div class="fan-center"></div></div>
                 <div class="gpu-pcie"></div>
             </div>
             <div class="gpu-info-row">
                 <div class="gpu-name-tag">
-                    <h4>RTX 4070 Ti Triple Fan</h4>
+                    <h4>RTX 4070 Ti Triple</h4>
                     <p>+120 MH/s | +0.060 ⭐/min</p>
                 </div>
                 <button class="btn-buy" onclick="buyGPU('RTX 4070 Ti', 50, 120, 0.060)">50 ⭐</button>
             </div>
         </div>
 
-        <!-- 4. RTX 4090 OC -->
         <div class="realistic-gpu-card">
             <div class="gpu-model-visual">
-                <div class="gpu-bracket"></div>
-                <div class="gpu-rgb-line" style="box-shadow: 0 0 12px var(--gold);"></div>
-                <div class="gpu-fan" style="width:50px;height:50px;"><div class="gpu-fan-blades" style="border-color: var(--gold);"></div><div class="fan-center"></div></div>
-                <div class="gpu-fan" style="width:50px;height:50px;"><div class="gpu-fan-blades" style="border-color: var(--gold);"></div><div class="fan-center"></div></div>
-                <div class="gpu-fan" style="width:50px;height:50px;"><div class="gpu-fan-blades" style="border-color: var(--gold);"></div><div class="fan-center"></div></div>
+                <div class="gpu-fan" style="width:48px;height:48px;"><div class="gpu-fan-blades" style="border-color: var(--gold);"></div><div class="fan-center"></div></div>
+                <div class="gpu-fan" style="width:48px;height:48px;"><div class="gpu-fan-blades" style="border-color: var(--gold);"></div><div class="fan-center"></div></div>
+                <div class="gpu-fan" style="width:48px;height:48px;"><div class="gpu-fan-blades" style="border-color: var(--gold);"></div><div class="fan-center"></div></div>
                 <div class="gpu-pcie"></div>
             </div>
             <div class="gpu-info-row">
                 <div class="gpu-name-tag">
-                    <h4>RTX 4090 Extreme Master</h4>
+                    <h4>RTX 4090 Extreme</h4>
                     <p>+250 MH/s | +0.150 ⭐/min</p>
                 </div>
                 <button class="btn-buy" onclick="buyGPU('RTX 4090 OC', 100, 250, 0.150)">100 ⭐</button>
             </div>
         </div>
 
-        <!-- 5. RTX 5090 Ti Monster -->
         <div class="realistic-gpu-card">
-            <div class="gpu-model-visual vip">
-                <div class="gpu-bracket"></div>
-                <div class="gpu-rgb-line"></div>
-                <div class="gpu-fan" style="width:50px;height:50px;"><div class="gpu-fan-blades"></div><div class="fan-center"></div></div>
-                <div class="gpu-fan" style="width:50px;height:50px;"><div class="gpu-fan-blades"></div><div class="fan-center"></div></div>
-                <div class="gpu-fan" style="width:50px;height:50px;"><div class="gpu-fan-blades"></div><div class="fan-center"></div></div>
+            <div class="gpu-model-visual" style="border-color: #ef4444; background: linear-gradient(90deg, #2b0e14 0%, #3d141e 50%, #20070c 100%);">
+                <div class="gpu-fan" style="width:48px;height:48px;"><div class="gpu-fan-blades" style="border-color:#ef4444;"></div><div class="fan-center"></div></div>
+                <div class="gpu-fan" style="width:48px;height:48px;"><div class="gpu-fan-blades" style="border-color:#ef4444;"></div><div class="fan-center"></div></div>
+                <div class="gpu-fan" style="width:48px;height:48px;"><div class="gpu-fan-blades" style="border-color:#ef4444;"></div><div class="fan-center"></div></div>
                 <div class="gpu-pcie"></div>
             </div>
             <div class="gpu-info-row">
                 <div class="gpu-name-tag">
-                    <h4 style="color: #f87171;">🔥 RTX 5090 Ti Monster OC</h4>
+                    <h4 style="color: #f87171;">🔥 RTX 5090 Ti Monster</h4>
                     <p>+700 MH/s | +0.450 ⭐/min</p>
                 </div>
                 <button class="btn-buy-vip" onclick="buyGPU('RTX 5090 Ti Monster', 250, 700, 0.450)">250 ⭐</button>
             </div>
         </div>
-
-        <!-- 6. Mining Rig ASIC Pro -->
-        <div class="realistic-gpu-card">
-            <div class="gpu-model-visual vip" style="background: linear-gradient(90deg, #181124 0%, #2f1742 50%, #150a21 100%); border-color: #a855f7;">
-                <div class="gpu-bracket"></div>
-                <div class="gpu-rgb-line" style="background: linear-gradient(90deg, #a855f7, #ec4899, #38bdf8); box-shadow: 0 0 14px #a855f7;"></div>
-                <div class="gpu-fan" style="width:46px;height:46px;"><div class="gpu-fan-blades" style="border-color:#a855f7;"></div><div class="fan-center"></div></div>
-                <div class="gpu-fan" style="width:46px;height:46px;"><div class="gpu-fan-blades" style="border-color:#ec4899;"></div><div class="fan-center"></div></div>
-                <div class="gpu-fan" style="width:46px;height:46px;"><div class="gpu-fan-blades" style="border-color:#38bdf8;"></div><div class="fan-center"></div></div>
-                <div class="gpu-pcie"></div>
-            </div>
-            <div class="gpu-info-row">
-                <div class="gpu-name-tag">
-                    <h4 style="color: #c084fc;">⚡️ Mining Rig ASIC Pro</h4>
-                    <p>+1800 MH/s | +1.200 ⭐/min</p>
-                </div>
-                <button class="btn-buy-vip" style="background: linear-gradient(135deg, #a855f7, #7c3aed); box-shadow: 0 0 12px rgba(168, 85, 247, 0.45);" onclick="buyGPU('Mining Rig ASIC Pro', 500, 1800, 1.200)">500 ⭐</button>
-            </div>
-        </div>
     </div>
 
     <!-- 3-BO'LIM: HAMYON -->
-    <div id="tab-wallet" class="tab-content">
+    <div id="tab-wallet" class="tab-content section-padding">
         <div class="section-header" id="txt-wallet-title">💳 Mablag'ni Yechib Olish</div>
         <div class="wallet-card">
-            <div style="font-size: 32px; margin-bottom: 8px;">💼</div>
+            <div style="font-size: 36px; margin-bottom: 8px;">💼</div>
             <h3 id="txt-rules-title">Yechib olish shartlari</h3>
-            <p id="txt-rules-desc" style="font-size: 12px; color: var(--text-muted); margin: 6px 0 14px 0;">
+            <p id="txt-rules-desc" style="font-size: 12px; color: var(--text-muted); margin: 8px 0 16px 0;">
                 Minimal yechish summasi: <b style="color: var(--gold);">50 ⭐</b>.<br>
-                So'rov yuborilgach, hisobingiz admin tomonidan tekshirilib tasdiqlanadi.
+                So'rov yuborilgach, uning profil havolasi to'g'ridan-to'g'ri adminga yetkaziladi.
             </p>
             <button class="btn-withdraw" id="btn-withdraw-txt" onclick="withdrawStars()">Barcha Stars'ni Yechish</button>
         </div>
     </div>
 
-    <!-- PASTKI NAVIGATSIYA -->
+    <!-- PASTKI MENYU -->
     <div class="bottom-nav">
         <button class="nav-item active" onclick="switchTab('farm', this)">
             <svg viewBox="0 0 24 24"><path d="M4 6h16v10H4V6zm-2 12h20v2H2v-2z"/></svg>
@@ -509,18 +540,53 @@
         const tg = window.Telegram?.WebApp;
         if (tg) { tg.ready(); tg.expand(); }
 
+        // ================= DIZAYN (THEME) BOSHQARUVI =================
+        let currentTheme = localStorage.getItem('user_room_theme') || 'neon';
+
+        function applyTheme(theme) {
+            document.body.classList.remove('theme-matrix', 'theme-lava');
+            document.querySelectorAll('.theme-btn').forEach(b => b.classList.remove('active'));
+
+            if (theme === 'matrix') {
+                document.body.classList.add('theme-matrix');
+                document.getElementById('btn-theme-matrix')?.classList.add('active');
+                document.getElementById('scene-wall-neon').innerText = "MATRIX";
+            } else if (theme === 'lava') {
+                document.body.classList.add('theme-lava');
+                document.getElementById('btn-theme-lava')?.classList.add('active');
+                document.getElementById('scene-wall-neon').innerText = "OVERCLOCK";
+            } else {
+                document.getElementById('btn-theme-neon')?.classList.add('active');
+                document.getElementById('scene-wall-neon').innerText = "MINING";
+            }
+            localStorage.setItem('user_room_theme', theme);
+        }
+
+        function selectTheme(theme) {
+            applyTheme(theme);
+            toggleThemePanel(); // Tanlangach panelni yopish
+        }
+
+        function toggleThemePanel() {
+            const panel = document.getElementById('theme-selector');
+            panel.classList.toggle('show');
+        }
+
+        applyTheme(currentTheme);
+
         // ================= TIL SOZLAMALARI =================
         const translations = {
             uz: {
                 flag: "🇷🇺",
                 btnName: "RU",
+                themeBtn: "Dizayn",
                 balLabel: "Balansdagi Stars",
                 powerLabel: "Ferma Quvvati",
                 speedLabel: "Tezlik",
                 shopTitle: "🛒 Videokartalar Bo'limi",
                 walletTitle: "💳 Mablag'ni Yechib Olish",
                 rulesTitle: "Yechib olish shartlari",
-                rulesDesc: "Minimal yechish summasi: <b style='color: var(--gold);'>50 ⭐</b>.<br>So'rov yuborilgach, hisobingiz admin tomonidan tekshirilib tasdiqlanadi.",
+                rulesDesc: "Minimal yechish summasi: <b style='color: var(--gold);'>50 ⭐</b>.<br>So'rov yuborilgach, uning profil havolasi to'g'ridan-to'g'ri adminga yetkaziladi.",
                 btnWithdraw: "Barcha Stars'ni Yechish",
                 navFarm: "Ferma",
                 navShop: "Do'kon",
@@ -531,13 +597,14 @@
             ru: {
                 flag: "🇺🇿",
                 btnName: "UZ",
+                themeBtn: "Дизайн",
                 balLabel: "Баланс Stars",
                 powerLabel: "Мощность фермы",
                 speedLabel: "Скорость",
                 shopTitle: "🛒 Магазин видеокарт",
                 walletTitle: "💳 Вывод средств",
                 rulesTitle: "Условия вывода",
-                rulesDesc: "Минимальная сумма вывода: <b style='color: var(--gold);'>50 ⭐</b>.<br>После отправки заявка проверяется администратором.",
+                rulesDesc: "Минимальная сумма вывода: <b style='color: var(--gold);'>50 ⭐</b>.<br>После отправки ссылка на ваш профиль передается администратору.",
                 btnWithdraw: "Вывести все Stars",
                 navFarm: "Ферма",
                 navShop: "Магазин",
@@ -547,7 +614,6 @@
             }
         };
 
-        // Agar foydalanuvchining Telegrami rus tilida bo'lsa avtomatik 'ru' tanlanadi
         let userLang = localStorage.getItem('app_lang');
         if (!userLang) {
             const tgLang = tg?.initDataUnsafe?.user?.language_code;
@@ -558,6 +624,7 @@
             const t = translations[userLang];
             document.getElementById('lang-flag').innerText = t.flag;
             document.getElementById('lang-name').innerText = t.btnName;
+            document.getElementById('txt-theme-btn').innerText = t.themeBtn;
             document.getElementById('txt-bal-label').innerText = t.balLabel;
             document.getElementById('txt-power-label').innerText = t.powerLabel;
             document.getElementById('txt-speed-label').innerText = t.speedLabel;
@@ -576,10 +643,9 @@
             userLang = (userLang === 'uz') ? 'ru' : 'uz';
             applyLanguage();
         }
-
         applyLanguage();
 
-        // ================= ASOSIY O'YIN KODI =================
+        // ================= ASOSIY O'YIN HISOBI =================
         let balance = parseFloat(localStorage.getItem('stars_bal')) || 0;
         let hashrate = parseInt(localStorage.getItem('user_hashrate')) || 0;
         let speed = parseFloat(localStorage.getItem('user_speed')) || 0;
@@ -606,7 +672,6 @@
         function switchTab(tabId, el) {
             document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
             document.querySelectorAll('.nav-item').forEach(btn => btn.classList.remove('active'));
-            
             document.getElementById('tab-' + tabId).classList.add('active');
             el.classList.add('active');
         }
@@ -622,7 +687,7 @@
                 const visible = Math.min(gpuCount, 4);
                 for(let i = 0; i < visible; i++) {
                     const s = document.createElement('div');
-                    s.className = 'gpu-slot';
+                    s.className = 'rig-slot';
                     rack.appendChild(s);
                 }
             }
